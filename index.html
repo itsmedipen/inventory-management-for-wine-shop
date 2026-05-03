@@ -36,8 +36,8 @@
 
     .card {
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, .02), 0 8px 24px rgba(0, 0, 0, .04);
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(124, 29, 29, .06), 0 8px 28px rgba(124, 29, 29, .08);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -540,69 +540,88 @@
       const greet = (() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; })();
 
       $('#app').innerHTML = `
-  <div class="brand-grad text-white px-5 pt-12 pb-16 rounded-b-3xl shadow-md">
-    <div class="flex items-center justify-between">
-      <div>
-        <div class="text-white/80 text-xs">${greet}, ${session.role === 'owner' ? 'Boss' : 'team'} 👋</div>
-        <div class="text-xl font-bold mt-0.5">${session.name}</div>
-      </div>
-      <button onclick="goto('more')" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center backdrop-blur">
-        ${ICON.user}
-      </button>
-    </div>
-    <div class="text-white/70 text-[11px] mt-3">${state.shop.name} • ${state.shop.address}</div>
-  </div>
+  <div style="min-height:100vh;display:flex;flex-direction:column;">
 
-  <div class="px-4 -mt-12 space-y-4">
-    <div class="card p-5">
-      <div class="text-xs text-stone-500 font-medium">Today's Sales</div>
-      <div class="text-3xl font-bold mt-1">${fmtNPR(todayRevenue)}</div>
-      <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-stone-100">
-        <div>
-          <div class="text-[10px] text-stone-500 uppercase tracking-wide">Orders</div>
-          <div class="text-lg font-bold mt-0.5">${todaySales.length}</div>
+    <!-- HEADER -->
+    <div class="brand-grad text-white px-5 pt-12 pb-20 rounded-b-3xl shadow-lg">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex-1 min-w-0">
+          <div class="text-white/70 text-xs font-medium tracking-wide uppercase">${greet} 👋</div>
+          <div class="text-2xl font-bold mt-0.5 tracking-tight truncate">${session.name}</div>
+          <div class="flex items-center gap-1.5 mt-2">
+            <div class="w-1 h-1 rounded-full bg-white/40"></div>
+            <div class="text-white/65 text-xs font-medium">${state.shop.name} &nbsp;·&nbsp; ${state.shop.address}</div>
+          </div>
         </div>
-        <div>
-          <div class="text-[10px] text-stone-500 uppercase tracking-wide">Items</div>
-          <div class="text-lg font-bold mt-0.5">${todayItems}</div>
-        </div>
-        <div>
-          <div class="text-[10px] text-stone-500 uppercase tracking-wide">Profit</div>
-          <div class="text-lg font-bold mt-0.5 text-emerald-600">${fmtNPR(todayProfit)}</div>
-        </div>
+        <button onclick="goto('more')" class="flex-shrink-0 w-12 h-12 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center backdrop-blur shadow-inner">
+          ${ICON.user}
+        </button>
       </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-3">
-      <button onclick="goto('pos')" class="card p-3 text-center hover:shadow-lg hover:-translate-y-1 transition">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center">${ICON.cart}</div>
-        <div class="mt-3 font-semibold text-sm">Sales</div>
-      </button>
-      <button onclick="goto('stock-add')" class="card p-3 text-center hover:shadow-lg hover:-translate-y-1 transition">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">${ICON.plus}</div>
-        <div class="mt-3 font-semibold text-sm">Add Stock</div>
-      </button>
-      <button onclick="goto('reports')" class="card p-3 text-center hover:shadow-lg hover:-translate-y-1 transition">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">${ICON.chart}</div>
-        <div class="mt-3 font-semibold text-sm">Report</div>
-      </button>
-    </div>
+    <!-- CONTENT -->
+    <div class="px-5 -mt-10 space-y-4 flex-1 pb-4">
 
-    <div class="card p-4">
-      <div class="font-semibold text-sm mb-2">Inventory snapshot</div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <div class="text-[10px] text-stone-500 uppercase tracking-wide">SKUs</div>
-          <div class="text-xl font-bold mt-0.5">${state.products.length}</div>
-        </div>
-        <div>
-          <div class="text-[10px] text-stone-500 uppercase tracking-wide">Stock value (cost)</div>
-          <div class="text-xl font-bold mt-0.5">${fmtNPR(stockValue)}</div>
+      <!-- Today's Sales -->
+      <div class="card p-5">
+        <div class="text-xs text-stone-500 font-semibold uppercase tracking-wide mb-1">Today's Sales</div>
+        <div class="text-3xl font-bold mt-1 tracking-tight">${fmtNPR(todayRevenue)}</div>
+        <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-stone-100">
+          <div>
+            <div class="text-[10px] text-stone-400 uppercase tracking-wide font-medium">Orders</div>
+            <div class="text-lg font-bold mt-0.5">${todaySales.length}</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-stone-400 uppercase tracking-wide font-medium">Items</div>
+            <div class="text-lg font-bold mt-0.5">${todayItems}</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-stone-400 uppercase tracking-wide font-medium">Net Profit</div>
+            <div class="text-lg font-bold mt-0.5 ${todayProfit >= 0 ? 'text-emerald-600' : 'text-red-500'}">${fmtNPR(todayProfit)}</div>
+          </div>
         </div>
       </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-3 gap-3">
+        <button onclick="goto('pos')" class="card p-4 text-center active:scale-95 transition-transform">
+          <div class="w-13 h-13 mx-auto rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600" style="width:52px;height:52px">${ICON.cart}</div>
+          <div class="mt-2.5 font-semibold text-sm text-stone-700">Sales</div>
+        </button>
+        <button onclick="goto('stock-add')" class="card p-4 text-center active:scale-95 transition-transform">
+          <div class="mx-auto rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600" style="width:52px;height:52px">${ICON.plus}</div>
+          <div class="mt-2.5 font-semibold text-sm text-stone-700">Add Stock</div>
+        </button>
+        <button onclick="goto('reports')" class="card p-4 text-center active:scale-95 transition-transform">
+          <div class="mx-auto rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600" style="width:52px;height:52px">${ICON.chart}</div>
+          <div class="mt-2.5 font-semibold text-sm text-stone-700">Reports</div>
+        </button>
+      </div>
+
+      <!-- Inventory Snapshot -->
+      <div class="card p-5">
+        <div class="text-xs text-stone-500 font-semibold uppercase tracking-wide mb-3">Inventory Snapshot</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-[11px] text-stone-400 font-medium">Total SKUs</div>
+            <div class="text-2xl font-bold mt-0.5">${state.products.length}</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-stone-400 font-medium">Stock Value</div>
+            <div class="text-2xl font-bold mt-0.5">${fmtNPR(stockValue)}</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-  </div>
-  ${bottomNav()}`;
+
+    <!-- FOOTER pinned to bottom -->
+    <div class="text-center text-[11px] text-stone-400 py-3" style="margin-top:auto;">
+      Developed by <span class="font-semibold text-stone-500">Cigi Technology</span> &copy; 2026. All rights reserved.
+    </div>
+
+    ${bottomNav()}
+  </div>`;
     }
 
     /* ====================================================================
@@ -684,7 +703,7 @@
     }
 
     function categoryEmoji(c) {
-      return ({ Whisky: '🥃', Beer: '🍺', Vodka: '🍸', Rum: '🥃', Wine: '🍷', Gin: '🍸', Brandy: '🥃' }[c] || '🍾');
+      return ({ 'Soft Drink': '🥤', 'Hard Drink': '🍶', 'Cigarette': '🚬', 'Vape': '💨', 'Others': '🛍️' }[c] || '🛍️');
     }
 
     function addToCart(pid) {
@@ -751,9 +770,51 @@
           </div>
           <span class="ml-auto text-stone-300">›</span>
         </button>
+        <button onclick="openPOSManualSelect()" class="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-stone-100 active:bg-red-50 transition text-left">
+          <div class="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center text-stone-700 flex-shrink-0">${ICON.edit}</div>
+          <div>
+            <div class="font-semibold">Select Manually</div>
+            <div class="text-xs text-stone-500 mt-0.5">Search and pick product by name</div>
+          </div>
+          <span class="ml-auto text-stone-300">›</span>
+        </button>
       </div>
     </div>
   </div>`;
+    }
+
+    function openPOSManualSelect() {
+      const products = state.products.filter(p => p.stock > 0);
+      $('#modal-root').innerHTML = `
+  <div class="modal-bd fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onclick="if(event.target===this)this.innerHTML=''">
+    <div class="sheet bg-white w-full max-w-[480px] rounded-t-2xl p-5 pb-8" style="max-height:85vh;display:flex;flex-direction:column;">
+      <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-4"></div>
+      <div class="font-bold text-lg mb-3">Select Product</div>
+      <div class="flex items-center gap-2 border border-stone-200 rounded-xl px-3 py-2.5 mb-3">
+        <span class="text-stone-400">${ICON.search}</span>
+        <input id="pos-pick-search" placeholder="Search by name…" class="flex-1 outline-none text-sm" oninput="filterPOSPickList()" />
+      </div>
+      <div id="pos-pick-list" class="overflow-y-auto flex-1 space-y-2"></div>
+    </div>
+  </div>`;
+      filterPOSPickList();
+      setTimeout(() => { const el = $('#pos-pick-search'); if (el) el.focus(); }, 200);
+    }
+
+    function filterPOSPickList() {
+      const q = ($('#pos-pick-search') || {}).value?.trim().toLowerCase() || '';
+      const list = state.products.filter(p => p.stock > 0 && (!q || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)));
+      $('#pos-pick-list').innerHTML = list.length === 0
+        ? `<div class="text-center text-stone-400 text-sm py-8">No products found</div>`
+        : list.map(p => `
+        <button onclick="$('#modal-root').innerHTML='';addToCart('${p.id}')" class="w-full flex items-center gap-3 p-3 rounded-2xl border border-stone-100 active:bg-red-50 transition text-left">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-50 to-amber-50 flex items-center justify-center text-xl flex-shrink-0">${categoryEmoji(p.category)}</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold truncate">${p.name}</div>
+            <div class="text-xs text-stone-500">${p.category} • ${fmtNPR(p.price)}</div>
+          </div>
+          <div class="text-xs ${p.stock <= p.lowStock ? 'text-amber-600' : 'text-stone-400'} font-medium flex-shrink-0">${p.stock} left</div>
+        </button>`).join('');
     }
     function posManualEntry() {
       const v = ($('#pos-manual-bc') || {}).value?.trim();
@@ -931,7 +992,14 @@
       c.qty = next; setCart(cart); renderCheckout();
     }
     function removeCart(idx) { cart.splice(idx, 1); setCart(cart); cart.length === 0 ? goto('pos') : renderCheckout(); }
-    function setDiscount(v) { sessionStorage.setItem('ws_discount', Number(v) || 0); const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0); const total = subtotal - (Number(v) || 0); /* re-render */ renderCheckout(); }
+    function setDiscount(v) {
+      const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0);
+      const tax = subtotal * (state.settings.taxRate / 100);
+      const maxDiscount = subtotal + tax;
+      const discount = Math.min(Math.max(Number(v) || 0, 0), maxDiscount);
+      sessionStorage.setItem('ws_discount', discount);
+      renderCheckout();
+    }
 
     function completeSale() {
       const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0);
@@ -1223,7 +1291,7 @@
       const editing = pid ? state.products.find(p => p.id === pid) : null;
       const prefBC = sessionStorage.getItem('ws_prefill_barcode') || '';
       sessionStorage.removeItem('ws_prefill_barcode');
-      const cats = ['Whisky', 'Beer', 'Vodka', 'Rum', 'Wine', 'Gin', 'Brandy'];
+      const cats = ['Soft Drink', 'Hard Drink', 'Cigarette', 'Vape', 'Others'];
       $('#app').innerHTML = `
   ${shellHeader(editing ? 'Edit Product' : 'New Product', { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
@@ -1395,16 +1463,39 @@
           for (let i = days - 1; i >= 0; i--) {
             const d = new Date(); d.setDate(d.getDate() - i);
             labels.push(d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }));
-            series.push(state.sales.filter(s => s.ts.slice(0, 10) === d.toISOString().slice(0, 10)).reduce((a, s) => a + s.total, 0));
+            series.push(sales.filter(s => s.ts.slice(0, 10) === d.toISOString().slice(0, 10)).reduce((a, s) => a + s.total, 0));
           }
         }
 
         $('#rep-body').innerHTML = `
       <div class="grid grid-cols-2 gap-3">
         <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Revenue</div><div class="text-xl font-bold mt-1">${fmtNPR(revenue)}</div><div class="text-[11px] text-stone-500 mt-1">${sales.length} orders</div></div>
-        <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Profit</div><div class="text-xl font-bold mt-1 text-emerald-600">${fmtNPR(profit)}</div><div class="text-[11px] text-stone-500 mt-1">${revenue ? Math.round(profit / revenue * 100) : 0}% margin</div></div>
+        <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Net Profit</div><div class="text-xl font-bold mt-1 ${profit >= 0 ? 'text-emerald-600' : 'text-red-600'}">${fmtNPR(profit)}</div><div class="text-[11px] text-stone-500 mt-1">${revenue ? Math.round(profit / revenue * 100) : 0}% margin</div></div>
         <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Cash sales</div><div class="text-base font-bold mt-1">${fmtNPR(cashRev)}</div></div>
         <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">QR / Mobile</div><div class="text-base font-bold mt-1">${fmtNPR(qrRev)}</div></div>
+      </div>
+
+      <div class="card p-4">
+        <div class="font-semibold text-sm mb-3">Profit breakdown</div>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-stone-500">Gross profit <span class="text-[11px]">(sales − cost)</span></span>
+            <span class="font-semibold">${fmtNPR(sales.reduce((a, s) => a + s.profit, 0))}</span>
+          </div>
+          <div class="flex justify-between text-red-600">
+            <span>Expenses <span class="text-[11px]">(${expenses.length} item${expenses.length !== 1 ? 's' : ''})</span></span>
+            <span class="font-semibold">− ${fmtNPR(expTotal)}</span>
+          </div>
+          ${expenses.length > 0 ? expenses.map(e => `
+          <div class="flex justify-between text-[11px] text-stone-400 pl-3">
+            <span>${e.category}${e.note ? ' — ' + e.note : ''}</span>
+            <span>${fmtNPR(e.amount)}</span>
+          </div>`).join('') : ''}
+          <div class="flex justify-between font-bold pt-2 border-t border-stone-100">
+            <span>Net profit</span>
+            <span class="${profit >= 0 ? 'text-emerald-600' : 'text-red-600'}">${fmtNPR(profit)}</span>
+          </div>
+        </div>
       </div>
 
       <div class="card p-4">
@@ -1756,15 +1847,24 @@
          </div>`
           : `<div class="card divide-y divide-stone-100">
           ${[...state.expenses].reverse().map(e => `
-            <div class="p-4 flex items-center justify-between">
-              <div>
+            <div class="p-4 flex items-center justify-between gap-3">
+              <div class="flex-1 min-w-0">
                 <div class="font-semibold text-sm">${e.category}</div>
-                <div class="text-[11px] text-stone-500">${fmtDate(e.ts)} ${fmtTime(e.ts)} • ${e.note || ''}</div>
+                <div class="text-[11px] text-stone-500">${fmtDate(e.ts)} ${fmtTime(e.ts)}${e.note ? ' • ' + e.note : ''}</div>
               </div>
-              <div class="text-sm font-bold text-red-600">-${fmtNPR(e.amount)}</div>
+              <div class="text-sm font-bold text-red-600 flex-shrink-0">-${fmtNPR(e.amount)}</div>
+              <button onclick="deleteExpense('${e.id}')" class="flex-shrink-0 w-8 h-8 rounded-full bg-red-50 text-red-400 flex items-center justify-center hover:bg-red-100 active:scale-95 transition text-lg leading-none">×</button>
             </div>`).join('')}
         </div>`}
   </div>`;
+    }
+
+    function deleteExpense(id) {
+      if (!confirm('Delete this expense?')) return;
+      state.expenses = state.expenses.filter(e => e.id !== id);
+      Store.save();
+      toast('Expense deleted', 'success');
+      renderExpenses();
     }
 
     function renderExpenseForm() {
@@ -1809,43 +1909,9 @@
        ADD STOCK (INTERACTIVE)
        ==================================================================== */
     function renderStockAdd() {
-      $('#app').innerHTML = `
-  ${shellHeader('Add Stock', { back: true, sub: 'Scan barcode to update inventory' })}
-  <div class="px-4 -mt-2 pb-6 space-y-3 text-center">
-    <div class="card p-8">
-      <div class="w-20 h-20 mx-auto rounded-full brand-grad text-white flex items-center justify-center mb-4 text-4xl shadow-lg">
-        ${ICON.scan}
-      </div>
-      <h2 class="text-lg font-bold mb-2">Scan Product Barcode</h2>
-      <p class="text-sm text-stone-500 mb-6">Scan an item to update its stock level. If it's a new product, you'll be prompted to add it.</p>
-      
-      <button onclick="openStockScanner()" class="w-full brand-grad text-white py-3.5 rounded-xl font-bold shadow-md mb-3 flex items-center justify-center gap-2">
-        ${ICON.scan}<span>Open Camera Scanner</span>
-      </button>
-      
-      <div class="flex items-center gap-2 mb-3">
-         <div class="h-px bg-stone-200 flex-1"></div>
-         <span class="text-xs text-stone-400 font-semibold uppercase">OR</span>
-         <div class="h-px bg-stone-200 flex-1"></div>
-      </div>
-      
-      <div class="flex gap-2">
-        <input id="sa-manual-bc" placeholder="Enter barcode manually" class="flex-1 border border-stone-200 rounded-xl px-3 py-2.5 outline-none font-mono text-sm ring-brand" />
-        <button onclick="stockManualEntry()" class="bg-stone-900 text-white px-4 rounded-xl font-semibold">Verify</button>
-      </div>
-    </div>
-  </div>
-  ${bottomNav()}`;
-
-      setTimeout(() => {
-        const inp = $('#sa-manual-bc');
-        if (inp) { inp.focus(); inp.addEventListener('keydown', e => { if (e.key === 'Enter') stockManualEntry(); }); }
-      }, 100);
-
-      window.stockManualEntry = () => {
-        const v = ($('#sa-manual-bc') || {}).value?.trim();
-        if (v) processStockScanned(v);
-      };
+      // Redirect to Products page and open the Add Product sheet
+      goto('products');
+      setTimeout(() => openAddProductSheet(), 150);
     }
 
     function openStockScanner() {
