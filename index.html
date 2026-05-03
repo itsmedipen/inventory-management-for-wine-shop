@@ -1,271 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#7c1d1d" />
-<title>Wine Cellar POS — Nepal</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<style>
-  :root{
-    --brand:#4c1d95; --brand-2:#7c3aed; --gold:#f59e0b; --ink:#0f172a;
-  }
-  html,body{height:100%;}
-  body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;background:#f8fafc;color:var(--ink);overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
-  .brand-grad{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);}
-  .card{background:#fff;border-radius:16px;box-shadow:0 2px 4px rgba(0,0,0,.02),0 8px 24px rgba(0,0,0,.04); transition: transform 0.2s ease, box-shadow 0.2s ease;}
-  .nav-active{color:var(--brand-2);}
-  .nav-active svg{stroke:var(--brand-2);}
-  input,select,textarea{font-size:16px;}
-  .scroll-area{overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  .no-scrollbar::-webkit-scrollbar{display:none;}
-  .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
-  .badge{font-size:10px;padding:2px 6px;border-radius:6px;font-weight:600;}
-  .skel{background:linear-gradient(90deg,#eee 25%,#f5f5f5 50%,#eee 75%);background-size:200% 100%;animation:sk 1.2s infinite;}
-  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-  .toast{animation:slideUp .25s ease;}
-  @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-  .modal-bd{animation:fade .2s ease;}
-  @keyframes fade{from{opacity:0}to{opacity:1}}
-  .sheet{animation:sheet .25s ease;}
-  @keyframes sheet{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .receipt-paper{background:#fff;background-image:repeating-linear-gradient(transparent 0 27px,#f3f4f6 27px 28px);}
-  @media print{
-    body * {visibility:hidden!important;}
-    #print-area, #print-area * {visibility:visible!important;}
-    #print-area {position:absolute;left:0;top:0;width:100%;}
-    .no-print{display:none!important;}
-  }
-  .pulse-dot{animation:pulse 1.6s infinite;}
-  @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
-  .ring-brand:focus{outline:none;box-shadow:0 0 0 3px rgba(124,58,237,.25);border-color:var(--brand-2);}
-  button:active{transform:scale(.98);}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#7c1d1d" />
+  <title>Wine Cellar POS — Nepal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    :root {
+      --brand: #4c1d95;
+      --brand-2: #7c3aed;
+      --gold: #f59e0b;
+      --ink: #0f172a;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: #f8fafc;
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .brand-grad {
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .02), 0 8px 24px rgba(0, 0, 0, .04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .nav-active {
+      color: var(--brand-2);
+    }
+
+    .nav-active svg {
+      stroke: var(--brand-2);
+    }
+
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+
+    .scroll-area {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .skel {
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: sk 1.2s infinite;
+    }
+
+    @keyframes sk {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    .toast {
+      animation: slideUp .25s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1
+      }
+    }
+
+    .modal-bd {
+      animation: fade .2s ease;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    .sheet {
+      animation: sheet .25s ease;
+    }
+
+    @keyframes sheet {
+      from {
+        transform: translateY(100%)
+      }
+
+      to {
+        transform: translateY(0)
+      }
+    }
+
+    .receipt-paper {
+      background: #fff;
+      background-image: repeating-linear-gradient(transparent 0 27px, #f3f4f6 27px 28px);
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+
+      #print-area,
+      #print-area * {
+        visibility: visible !important;
+      }
+
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    .pulse-dot {
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: .5
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
+
+    .ring-brand:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, .25);
+      border-color: var(--brand-2);
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+  </style>
 </head>
+
 <body class="select-none">
 
-<!-- ============== APP ROOT ============== -->
-<div id="app" class="min-h-screen max-w-[480px] mx-auto bg-stone-100 relative pb-20"></div>
+  <!-- ============== APP ROOT ============== -->
+  <div id="app" class="min-h-screen max-w-[480px] mx-auto bg-stone-100 relative pb-20"></div>
 
-<!-- ============== TOAST STACK ============== -->
-<div id="toasts" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 items-center pointer-events-none"></div>
+  <!-- ============== TOAST STACK ============== -->
+  <div id="toasts"
+    class="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-2 items-center pointer-events-none">
+  </div>
 
-<!-- ============== MODAL ROOT ============== -->
-<div id="modal-root"></div>
+  <!-- ============== MODAL ROOT ============== -->
+  <div id="modal-root"></div>
 
-<script>
-/* ====================================================================
-   WINE CELLAR POS — NEPALI WINE SHOP INVENTORY & POS
-   Single-file demo app (mobile-first PWA-style)
-   Persistence: localStorage  |  Currency: NPR (रू)
-   ==================================================================== */
+  <script>
+    /* ====================================================================
+       WINE CELLAR POS — NEPALI WINE SHOP INVENTORY & POS
+       Single-file demo app (mobile-first PWA-style)
+       Persistence: localStorage  |  Currency: NPR (रू)
+       ==================================================================== */
 
-/* ---------- UTILITIES ---------- */
-const $ = (s, p=document) => p.querySelector(s);
-const $$ = (s, p=document) => [...p.querySelectorAll(s)];
-const uid = (p='id') => p+'_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
-const fmtNPR = n => 'रू '+(Number(n)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmtInt = n => (Number(n)||0).toLocaleString('en-IN');
-const todayISO = () => new Date().toISOString().slice(0,10);
-const nowISO = () => new Date().toISOString();
-const fmtDate = iso => { const d=new Date(iso); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); };
-const fmtTime = iso => { const d=new Date(iso); return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); };
-const sleep = ms => new Promise(r=>setTimeout(r,ms));
+    /* ---------- UTILITIES ---------- */
+    const $ = (s, p = document) => p.querySelector(s);
+    const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+    const uid = (p = 'id') => p + '_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3);
+    const fmtNPR = n => 'रू ' + (Number(n) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtInt = n => (Number(n) || 0).toLocaleString('en-IN');
+    const todayISO = () => new Date().toISOString().slice(0, 10);
+    const nowISO = () => new Date().toISOString();
+    const fmtDate = iso => { const d = new Date(iso); return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); };
+    const fmtTime = iso => { const d = new Date(iso); return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); };
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-const toast = (msg, type='success') => {
-  const el = document.createElement('div');
-  const colors = {success:'bg-emerald-600',error:'bg-red-600',info:'bg-stone-800',warn:'bg-amber-600'};
-  el.className = `toast ${colors[type]||colors.info} text-white px-4 py-2.5 rounded-full text-sm font-medium shadow-lg pointer-events-auto max-w-[90vw]`;
-  el.textContent = msg;
-  $('#toasts').appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2400);
-};
+    const toast = (msg, type = 'success') => {
+      const el = document.createElement('div');
+      const colors = { success: 'bg-emerald-600', error: 'bg-red-600', info: 'bg-stone-800', warn: 'bg-amber-600' };
+      el.className = `toast ${colors[type] || colors.info} text-white px-4 py-2.5 rounded-full text-sm font-medium shadow-lg pointer-events-auto max-w-[90vw]`;
+      el.textContent = msg;
+      $('#toasts').appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 2400);
+    };
 
-/* ---------- DATA STORE ---------- */
-const STORE_KEY = 'wineshop_pos_v1';
-const DEFAULTS = {
-  shop: { name:'Sherpa Wine Cellar', address:'Boudha, Kathmandu', phone:'+977-9841-XXXXXX', vat:'601234567', currency:'NPR' },
-  users: [
-    { id:'u_owner', email:'owner@wineshop.com', pin:'1234', name:'Dipen Sherpa', role:'owner' },
-    { id:'u_cashier', email:'cashier@wineshop.com', pin:'0000', name:'Cashier', role:'cashier' }
-  ],
-  products: [],
-  sales: [],
-  purchases: [],
-  expenses: [],
-  audit: [],
-  settings: { lowStockThreshold:5, taxRate:0, qrPaymentLabel:'Fonepay / eSewa / Khalti' }
-};
+    /* ---------- DATA STORE ---------- */
+    const STORE_KEY = 'wineshop_pos_v1';
+    const DEFAULTS = {
+      shop: { name: 'Sherpa Wine Cellar', address: 'Boudha, Kathmandu', phone: '+977-9841-XXXXXX', vat: '601234567', currency: 'NPR' },
+      users: [
+        { id: 'u_owner', email: 'owner@wineshop.com', pin: '1234', name: 'Dipen Sherpa', role: 'owner' },
+        { id: 'u_cashier', email: 'cashier@wineshop.com', pin: '0000', name: 'Cashier', role: 'cashier' }
+      ],
+      products: [],
+      sales: [],
+      purchases: [],
+      expenses: [],
+      audit: [],
+      settings: { lowStockThreshold: 5, taxRate: 0, qrPaymentLabel: 'Fonepay / eSewa / Khalti' }
+    };
 
-const seedProducts = () => ([
-  { id:uid('p'), name:'Khukri Rum 750ml',         category:'Rum',     barcode:'8901234500011', price:1450, cost:1100, stock:24, lowStock:5,  brand:'Khukri',     unit:'750ml' },
-  { id:uid('p'), name:'Ruslan Vodka 750ml',       category:'Vodka',   barcode:'8901234500028', price:1200, cost:900,  stock:18, lowStock:5,  brand:'Ruslan',     unit:'750ml' },
-  { id:uid('p'), name:'8848 Vodka 1L',            category:'Vodka',   barcode:'8901234500035', price:2100, cost:1650, stock:12, lowStock:4,  brand:'8848',       unit:'1000ml'},
-  { id:uid('p'), name:'Nepal Ice Strong 650ml',   category:'Beer',    barcode:'8901234500042', price:380,  cost:290,  stock:48, lowStock:12, brand:'Nepal Ice',  unit:'650ml' },
-  { id:uid('p'), name:'Tuborg Premium 500ml',     category:'Beer',    barcode:'8901234500059', price:340,  cost:260,  stock:60, lowStock:12, brand:'Tuborg',     unit:'500ml' },
-  { id:uid('p'), name:'Gorkha Strong 650ml',      category:'Beer',    barcode:'8901234500066', price:360,  cost:275,  stock:42, lowStock:12, brand:'Gorkha',     unit:'650ml' },
-  { id:uid('p'), name:'Carlsberg 500ml',          category:'Beer',    barcode:'8901234500073', price:380,  cost:290,  stock:36, lowStock:12, brand:'Carlsberg',  unit:'500ml' },
-  { id:uid('p'), name:'Old Durbar Whisky 750ml',  category:'Whisky',  barcode:'8901234500080', price:2800, cost:2200, stock:14, lowStock:4,  brand:'Old Durbar', unit:'750ml' },
-  { id:uid('p'), name:'Signature Whisky 750ml',   category:'Whisky',  barcode:'8901234500097', price:2400, cost:1900, stock:10, lowStock:3,  brand:'Signature',  unit:'750ml' },
-  { id:uid('p'), name:'Royal Stag 750ml',         category:'Whisky',  barcode:'8901234500103', price:1850, cost:1450, stock:16, lowStock:4,  brand:'Royal Stag', unit:'750ml' },
-  { id:uid('p'), name:'Blenders Pride 750ml',     category:'Whisky',  barcode:'8901234500110', price:2600, cost:2050, stock:8,  lowStock:3,  brand:'Blenders Pride', unit:'750ml' },
-  { id:uid('p'), name:'Smirnoff Vodka 750ml',     category:'Vodka',   barcode:'8901234500127', price:1850, cost:1450, stock:11, lowStock:4,  brand:'Smirnoff',   unit:'750ml' },
-  { id:uid('p'), name:'Bagpiper Whisky 750ml',    category:'Whisky',  barcode:'8901234500134', price:1450, cost:1100, stock:20, lowStock:5,  brand:'Bagpiper',   unit:'750ml' },
-  { id:uid('p'), name:'Hayward 5000 650ml',       category:'Beer',    barcode:'8901234500141', price:360,  cost:280,  stock:30, lowStock:10, brand:'Hayward',    unit:'650ml' },
-  { id:uid('p'), name:'Jawlakhel Wine 750ml',     category:'Wine',    barcode:'8901234500158', price:850,  cost:620,  stock:9,  lowStock:3,  brand:'Jawlakhel',  unit:'750ml' },
-  { id:uid('p'), name:'Hi Mountain Wine 750ml',   category:'Wine',    barcode:'8901234500165', price:780,  cost:580,  stock:7,  lowStock:3,  brand:'Hi Mountain',unit:'750ml' },
-]);
+    const seedProducts = () => ([
+      { id: uid('p'), name: 'Khukri Rum 750ml', category: 'Rum', barcode: '8901234500011', price: 1450, cost: 1100, stock: 24, lowStock: 5, brand: 'Khukri', unit: '750ml' },
+      { id: uid('p'), name: 'Ruslan Vodka 750ml', category: 'Vodka', barcode: '8901234500028', price: 1200, cost: 900, stock: 18, lowStock: 5, brand: 'Ruslan', unit: '750ml' },
+      { id: uid('p'), name: '8848 Vodka 1L', category: 'Vodka', barcode: '8901234500035', price: 2100, cost: 1650, stock: 12, lowStock: 4, brand: '8848', unit: '1000ml' },
+      { id: uid('p'), name: 'Nepal Ice Strong 650ml', category: 'Beer', barcode: '8901234500042', price: 380, cost: 290, stock: 48, lowStock: 12, brand: 'Nepal Ice', unit: '650ml' },
+      { id: uid('p'), name: 'Tuborg Premium 500ml', category: 'Beer', barcode: '8901234500059', price: 340, cost: 260, stock: 60, lowStock: 12, brand: 'Tuborg', unit: '500ml' },
+      { id: uid('p'), name: 'Gorkha Strong 650ml', category: 'Beer', barcode: '8901234500066', price: 360, cost: 275, stock: 42, lowStock: 12, brand: 'Gorkha', unit: '650ml' },
+      { id: uid('p'), name: 'Carlsberg 500ml', category: 'Beer', barcode: '8901234500073', price: 380, cost: 290, stock: 36, lowStock: 12, brand: 'Carlsberg', unit: '500ml' },
+      { id: uid('p'), name: 'Old Durbar Whisky 750ml', category: 'Whisky', barcode: '8901234500080', price: 2800, cost: 2200, stock: 14, lowStock: 4, brand: 'Old Durbar', unit: '750ml' },
+      { id: uid('p'), name: 'Signature Whisky 750ml', category: 'Whisky', barcode: '8901234500097', price: 2400, cost: 1900, stock: 10, lowStock: 3, brand: 'Signature', unit: '750ml' },
+      { id: uid('p'), name: 'Royal Stag 750ml', category: 'Whisky', barcode: '8901234500103', price: 1850, cost: 1450, stock: 16, lowStock: 4, brand: 'Royal Stag', unit: '750ml' },
+      { id: uid('p'), name: 'Blenders Pride 750ml', category: 'Whisky', barcode: '8901234500110', price: 2600, cost: 2050, stock: 8, lowStock: 3, brand: 'Blenders Pride', unit: '750ml' },
+      { id: uid('p'), name: 'Smirnoff Vodka 750ml', category: 'Vodka', barcode: '8901234500127', price: 1850, cost: 1450, stock: 11, lowStock: 4, brand: 'Smirnoff', unit: '750ml' },
+      { id: uid('p'), name: 'Bagpiper Whisky 750ml', category: 'Whisky', barcode: '8901234500134', price: 1450, cost: 1100, stock: 20, lowStock: 5, brand: 'Bagpiper', unit: '750ml' },
+      { id: uid('p'), name: 'Hayward 5000 650ml', category: 'Beer', barcode: '8901234500141', price: 360, cost: 280, stock: 30, lowStock: 10, brand: 'Hayward', unit: '650ml' },
+      { id: uid('p'), name: 'Jawlakhel Wine 750ml', category: 'Wine', barcode: '8901234500158', price: 850, cost: 620, stock: 9, lowStock: 3, brand: 'Jawlakhel', unit: '750ml' },
+      { id: uid('p'), name: 'Hi Mountain Wine 750ml', category: 'Wine', barcode: '8901234500165', price: 780, cost: 580, stock: 7, lowStock: 3, brand: 'Hi Mountain', unit: '750ml' },
+    ]);
 
-const seedSales = (products) => {
-  const sales = [];
-  const now = Date.now();
-  for(let d=0; d<7; d++){
-    const day = now - d*86400000;
-    const txCount = 3 + Math.floor(Math.random()*5);
-    for(let t=0; t<txCount; t++){
-      const items = [];
-      const itemCount = 1 + Math.floor(Math.random()*4);
-      const used = new Set();
-      for(let i=0;i<itemCount;i++){
-        let p = products[Math.floor(Math.random()*products.length)];
-        if(used.has(p.id)) continue; used.add(p.id);
-        const qty = 1 + Math.floor(Math.random()*3);
-        items.push({ productId:p.id, name:p.name, price:p.price, cost:p.cost, qty });
+    const seedSales = (products) => {
+      const sales = [];
+      const now = Date.now();
+      for (let d = 0; d < 7; d++) {
+        const day = now - d * 86400000;
+        const txCount = 3 + Math.floor(Math.random() * 5);
+        for (let t = 0; t < txCount; t++) {
+          const items = [];
+          const itemCount = 1 + Math.floor(Math.random() * 4);
+          const used = new Set();
+          for (let i = 0; i < itemCount; i++) {
+            let p = products[Math.floor(Math.random() * products.length)];
+            if (used.has(p.id)) continue; used.add(p.id);
+            const qty = 1 + Math.floor(Math.random() * 3);
+            items.push({ productId: p.id, name: p.name, price: p.price, cost: p.cost, qty });
+          }
+          const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+          const cost = items.reduce((s, i) => s + i.cost * i.qty, 0);
+          const ts = new Date(day - Math.floor(Math.random() * 36000000)).toISOString();
+          sales.push({
+            id: uid('s'),
+            invoice: 'INV-' + String(1000 + sales.length + 1),
+            items, subtotal, discount: 0, tax: 0, total: subtotal,
+            cost, profit: subtotal - cost,
+            payment: Math.random() > 0.5 ? 'cash' : 'qr',
+            cashier: 'Dipen Sherpa',
+            customer: 'Walk-in',
+            ts
+          });
+        }
       }
-      const subtotal = items.reduce((s,i)=>s+i.price*i.qty,0);
-      const cost = items.reduce((s,i)=>s+i.cost*i.qty,0);
-      const ts = new Date(day - Math.floor(Math.random()*36000000)).toISOString();
-      sales.push({
-        id: uid('s'),
-        invoice: 'INV-'+String(1000+sales.length+1),
-        items, subtotal, discount:0, tax:0, total:subtotal,
-        cost, profit: subtotal-cost,
-        payment: Math.random()>0.5 ? 'cash' : 'qr',
-        cashier: 'Dipen Sherpa',
-        customer:'Walk-in',
-        ts
-      });
+      return sales;
+    };
+
+    const Store = {
+      load() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) { }
+        const data = JSON.parse(JSON.stringify(DEFAULTS));
+        data.products = seedProducts();
+        data.sales = seedSales(data.products);
+        // adjust stock down based on seeded sales
+        data.sales.forEach(s => s.items.forEach(i => {
+          const p = data.products.find(p => p.id === i.productId);
+          if (p) p.stock = Math.max(0, p.stock - i.qty);
+        }));
+        data.audit.push({ id: uid('a'), ts: nowISO(), user: 'system', action: 'seed', detail: 'Demo data initialized' });
+        Store.save(data);
+        return data;
+      },
+      save(d = state) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); },
+      reset() { localStorage.removeItem(STORE_KEY); }
+    };
+
+    /* ---------- APP STATE ---------- */
+    let state = Store.load();
+    state.expenses = state.expenses || [];
+    let session = JSON.parse(sessionStorage.getItem('ws_session') || 'null');
+    let route = location.hash.replace('#', '') || (session ? 'home' : 'login');
+    let cart = JSON.parse(sessionStorage.getItem('ws_cart') || '[]');
+    let scanner = null;
+    let scannerCtx = 'pos'; // 'pos' | 'products'
+
+    const setSession = (u) => { session = u; if (u) sessionStorage.setItem('ws_session', JSON.stringify(u)); else sessionStorage.removeItem('ws_session'); };
+    const setCart = (c) => { cart = c; sessionStorage.setItem('ws_cart', JSON.stringify(c)); };
+    const goto = (r) => { location.hash = r; };
+
+    window.addEventListener('hashchange', () => {
+      route = location.hash.replace('#', '') || 'home';
+      render();
+    });
+
+    /* ---------- AUDIT ---------- */
+    const audit = (action, detail) => {
+      state.audit.unshift({ id: uid('a'), ts: nowISO(), user: session?.name || 'system', role: session?.role || 'system', action, detail });
+      if (state.audit.length > 500) state.audit.length = 500;
+      Store.save();
+    };
+
+    /* ---------- ICONS ---------- */
+    const ICON = {
+      home: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+      cart: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>`,
+      box: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>`,
+      chart: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>`,
+      more: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>`,
+      scan: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>`,
+      search: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
+      plus: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>`,
+      minus: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>`,
+      trash: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+      back: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
+      edit: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>`,
+      cash: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>`,
+      qr: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>`,
+      user: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+      logout: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`,
+      alert: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+      print: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>`,
+      share: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>`,
+      check: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+      bell: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+      arrow: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+      receipt: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>`,
+      truck: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v11"/><path d="M14 9h4l4 4v4a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>`,
+      shield: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.7 8.95a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a2 2 0 0 1 2.5 0C15.5 3.8 18 5 20 5a1 1 0 0 1 1 1z"/></svg>`,
+      history: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>`,
+      settings: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
+      bottle: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v3a2 2 0 0 0 .5 1.4l3 3.4A4 4 0 0 1 18 12.4V20a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-7.6a4 4 0 0 1 .5-2.6l3-3.4A2 2 0 0 0 10 5V2"/><path d="M10 2h4"/><path d="M6 14h12"/></svg>`,
+    };
+
+    /* ====================================================================
+       ROUTES — render() picks correct screen
+       ==================================================================== */
+    function render() {
+      if (!session) { if (route !== 'login') location.hash = 'login'; return renderLogin(); }
+      switch (route) {
+        case 'home': return renderHome();
+        case 'pos': return renderPOS();
+        case 'products': return renderProducts();
+        case 'reports': return renderReports();
+        case 'more': return renderMore();
+        case 'product-new': return renderProductForm();
+        case 'product-edit': return renderProductForm(sessionStorage.getItem('ws_edit_pid'));
+        case 'checkout': return renderCheckout();
+        case 'sales': return renderSalesHistory();
+        case 'expenses': return renderExpenses();
+        case 'expense-new': return renderExpenseForm();
+        case 'stock-add': return renderStockAdd();
+        case 'purchases': return renderPurchases();
+        case 'purchase-new': return renderPurchaseForm();
+        case 'audit': return renderAudit();
+        case 'settings': return renderSettings();
+        case 'login': return renderLogin();
+        default:
+          if (route.startsWith('receipt/')) return renderReceipt(route.split('/')[1]);
+          if (route.startsWith('product/')) return renderProductDetail(route.split('/')[1]);
+          return renderHome();
+      }
     }
-  }
-  return sales;
-};
 
-const Store = {
-  load(){
-    try{
-      const raw = localStorage.getItem(STORE_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){}
-    const data = JSON.parse(JSON.stringify(DEFAULTS));
-    data.products = seedProducts();
-    data.sales = seedSales(data.products);
-    // adjust stock down based on seeded sales
-    data.sales.forEach(s => s.items.forEach(i => {
-      const p = data.products.find(p=>p.id===i.productId);
-      if(p) p.stock = Math.max(0, p.stock - i.qty);
-    }));
-    data.audit.push({ id:uid('a'), ts:nowISO(), user:'system', action:'seed', detail:'Demo data initialized'});
-    Store.save(data);
-    return data;
-  },
-  save(d=state){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); },
-  reset(){ localStorage.removeItem(STORE_KEY); }
-};
-
-/* ---------- APP STATE ---------- */
-let state = Store.load();
-state.expenses = state.expenses || [];
-let session = JSON.parse(sessionStorage.getItem('ws_session')||'null');
-let route = location.hash.replace('#','') || (session?'home':'login');
-let cart = JSON.parse(sessionStorage.getItem('ws_cart')||'[]');
-let scanner = null;
-let scannerCtx = 'pos'; // 'pos' | 'products'
-
-const setSession = (u) => { session = u; if(u) sessionStorage.setItem('ws_session', JSON.stringify(u)); else sessionStorage.removeItem('ws_session'); };
-const setCart = (c) => { cart = c; sessionStorage.setItem('ws_cart', JSON.stringify(c)); };
-const goto = (r) => { location.hash = r; };
-
-window.addEventListener('hashchange', () => {
-  route = location.hash.replace('#','') || 'home';
-  render();
-});
-
-/* ---------- AUDIT ---------- */
-const audit = (action, detail) => {
-  state.audit.unshift({ id:uid('a'), ts:nowISO(), user: session?.name||'system', role:session?.role||'system', action, detail });
-  if(state.audit.length>500) state.audit.length=500;
-  Store.save();
-};
-
-/* ---------- ICONS ---------- */
-const ICON = {
-  home:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-  cart:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>`,
-  box:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>`,
-  chart:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>`,
-  more:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>`,
-  scan:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>`,
-  search:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
-  plus:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>`,
-  minus:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>`,
-  trash:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
-  back:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
-  edit:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>`,
-  cash:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>`,
-  qr:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>`,
-  user:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-  logout:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`,
-  alert:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
-  print:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>`,
-  share:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>`,
-  check:`<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
-  bell:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
-  arrow:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
-  receipt:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>`,
-  truck:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v11"/><path d="M14 9h4l4 4v4a1 1 0 0 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>`,
-  shield:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.7 8.95a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a2 2 0 0 1 2.5 0C15.5 3.8 18 5 20 5a1 1 0 0 1 1 1z"/></svg>`,
-  history:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>`,
-  settings:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
-  bottle:`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v3a2 2 0 0 0 .5 1.4l3 3.4A4 4 0 0 1 18 12.4V20a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-7.6a4 4 0 0 1 .5-2.6l3-3.4A2 2 0 0 0 10 5V2"/><path d="M10 2h4"/><path d="M6 14h12"/></svg>`,
-};
-
-/* ====================================================================
-   ROUTES — render() picks correct screen
-   ==================================================================== */
-function render(){
-  if(!session){ if(route!=='login') location.hash='login'; return renderLogin(); }
-  switch(route){
-    case 'home': return renderHome();
-    case 'pos': return renderPOS();
-    case 'products': return renderProducts();
-    case 'reports': return renderReports();
-    case 'more': return renderMore();
-    case 'product-new': return renderProductForm();
-    case 'product-edit': return renderProductForm(sessionStorage.getItem('ws_edit_pid'));
-    case 'checkout': return renderCheckout();
-    case 'sales': return renderSalesHistory();
-    case 'expenses': return renderExpenses();
-    case 'expense-new': return renderExpenseForm();
-    case 'stock-add': return renderStockAdd();
-    case 'purchases': return renderPurchases();
-    case 'purchase-new': return renderPurchaseForm();
-    case 'audit': return renderAudit();
-    case 'settings': return renderSettings();
-    case 'login': return renderLogin();
-    default:
-      if(route.startsWith('receipt/')) return renderReceipt(route.split('/')[1]);
-      if(route.startsWith('product/')) return renderProductDetail(route.split('/')[1]);
-      return renderHome();
-  }
-}
-
-/* ====================================================================
-   LOGIN
-   ==================================================================== */
-function renderLogin(){
-  $('#app').innerHTML = `
+    /* ====================================================================
+       LOGIN
+       ==================================================================== */
+    function renderLogin() {
+      $('#app').innerHTML = `
   <div class="min-h-screen flex flex-col">
     <div class="brand-grad text-white pt-14 pb-12 px-6 rounded-b-[28px] shadow-lg">
       <div class="flex items-center gap-3">
@@ -308,93 +457,93 @@ function renderLogin(){
     </div>
   </div>`;
 
-  $('#li-go').onclick = doLogin;
-  $('#li-pin').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-  $$('.demo-acc').forEach(b => b.onclick = () => {
-    const r = b.dataset.role;
-    $('#li-email').value = r==='owner' ? 'owner@wineshop.com' : 'cashier@wineshop.com';
-    $('#li-pin').value = r==='owner' ? '1234' : '0000';
-  });
-}
+      $('#li-go').onclick = doLogin;
+      $('#li-pin').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+      $$('.demo-acc').forEach(b => b.onclick = () => {
+        const r = b.dataset.role;
+        $('#li-email').value = r === 'owner' ? 'owner@wineshop.com' : 'cashier@wineshop.com';
+        $('#li-pin').value = r === 'owner' ? '1234' : '0000';
+      });
+    }
 
-function doLogin(){
-  const email = $('#li-email').value.trim().toLowerCase();
-  const pin = $('#li-pin').value.trim();
-  const u = state.users.find(u => u.email.toLowerCase()===email && u.pin===pin);
-  if(!u){ toast('Invalid credentials','error'); return; }
-  setSession({ id:u.id, name:u.name, role:u.role, email:u.email });
-  audit('login', `${u.name} signed in`);
-  toast(`Welcome, ${u.name}`,'success');
-  goto('home');
-}
+    function doLogin() {
+      const email = $('#li-email').value.trim().toLowerCase();
+      const pin = $('#li-pin').value.trim();
+      const u = state.users.find(u => u.email.toLowerCase() === email && u.pin === pin);
+      if (!u) { toast('Invalid credentials', 'error'); return; }
+      setSession({ id: u.id, name: u.name, role: u.role, email: u.email });
+      audit('login', `${u.name} signed in`);
+      toast(`Welcome, ${u.name}`, 'success');
+      goto('home');
+    }
 
-/* ====================================================================
-   HEADER + BOTTOM NAV (shared)
-   ==================================================================== */
-function shellHeader(title, opts={}){
-  const back = opts.back ? `<button onclick="history.length>1?history.back():goto('home')" class="-ml-1 p-1.5">${ICON.back}</button>` : '';
-  const right = opts.right || '';
-  return `
-  <div class="brand-grad text-white px-4 pt-12 pb-5 ${opts.flat?'':'rounded-b-2xl'} shadow-md">
+    /* ====================================================================
+       HEADER + BOTTOM NAV (shared)
+       ==================================================================== */
+    function shellHeader(title, opts = {}) {
+      const back = opts.back ? `<button onclick="history.length>1?history.back():goto('home')" class="-ml-1 p-1.5">${ICON.back}</button>` : '';
+      const right = opts.right || '';
+      return `
+  <div class="brand-grad text-white px-4 pt-12 pb-5 ${opts.flat ? '' : 'rounded-b-2xl'} shadow-md">
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center gap-2">${back}<h1 class="text-lg font-bold">${title}</h1></div>
       <div class="flex items-center gap-2">${right}</div>
     </div>
     ${opts.sub ? `<div class="text-white/80 text-xs mt-0.5">${opts.sub}</div>` : ''}
   </div>`;
-}
+    }
 
-function bottomNav(){
-  const tabs = [
-    {id:'home', label:'Home', icon:ICON.home},
-    {id:'pos', label:'Sell', icon:ICON.cart},
-    {id:'products', label:'Stock', icon:ICON.box},
-    {id:'reports', label:'Reports', icon:ICON.chart},
-    {id:'more', label:'More', icon:ICON.more}
-  ];
-  const active = ['home','pos','products','reports','more'].includes(route) ? route : '';
-  return `
+    function bottomNav() {
+      const tabs = [
+        { id: 'home', label: 'Home', icon: ICON.home },
+        { id: 'pos', label: 'Sell', icon: ICON.cart },
+        { id: 'products', label: 'Stock', icon: ICON.box },
+        { id: 'reports', label: 'Reports', icon: ICON.chart },
+        { id: 'more', label: 'More', icon: ICON.more }
+      ];
+      const active = ['home', 'pos', 'products', 'reports', 'more'].includes(route) ? route : '';
+      return `
   <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-[480px] w-full bg-white border-t border-stone-200 z-40 no-print">
     <div class="grid grid-cols-5 px-1">
       ${tabs.map(t => `
-        <button onclick="goto('${t.id}')" class="flex flex-col items-center gap-0.5 py-2.5 ${active===t.id?'nav-active':'text-stone-500'}">
+        <button onclick="goto('${t.id}')" class="flex flex-col items-center gap-0.5 py-2.5 ${active === t.id ? 'nav-active' : 'text-stone-500'}">
           ${t.icon}
           <span class="text-[10px] font-medium">${t.label}</span>
-          ${t.id==='pos' && cart.length>0 ? `<span class="absolute mt-1 ml-7 bg-red-600 text-white text-[10px] rounded-full px-1.5">${cart.length}</span>` : ''}
+          ${t.id === 'pos' && cart.length > 0 ? `<span class="absolute mt-1 ml-7 bg-red-600 text-white text-[10px] rounded-full px-1.5">${cart.length}</span>` : ''}
         </button>`).join('')}
     </div>
     <div style="height:env(safe-area-inset-bottom)"></div>
   </nav>`;
-}
+    }
 
-/* ====================================================================
-   HOME / DASHBOARD
-   ==================================================================== */
-function renderHome(){
-  const today = todayISO();
-  const todaySales = state.sales.filter(s => s.ts.slice(0,10)===today);
-  const todayRevenue = todaySales.reduce((a,s)=>a+s.total,0);
-  const todayProfit = todaySales.reduce((a,s)=>a+s.profit,0);
-  const todayItems = todaySales.reduce((a,s)=>a+s.items.reduce((b,i)=>b+i.qty,0),0);
-  const lowStock = state.products.filter(p => p.stock<=p.lowStock);
-  const stockValue = state.products.reduce((a,p)=>a+p.cost*p.stock,0);
+    /* ====================================================================
+       HOME / DASHBOARD
+       ==================================================================== */
+    function renderHome() {
+      const today = todayISO();
+      const todaySales = state.sales.filter(s => s.ts.slice(0, 10) === today);
+      const todayRevenue = todaySales.reduce((a, s) => a + s.total, 0);
+      const todayProfit = todaySales.reduce((a, s) => a + s.profit, 0);
+      const todayItems = todaySales.reduce((a, s) => a + s.items.reduce((b, i) => b + i.qty, 0), 0);
+      const lowStock = state.products.filter(p => p.stock <= p.lowStock);
+      const stockValue = state.products.reduce((a, p) => a + p.cost * p.stock, 0);
 
-  // last 7-day series
-  const days = []; const series = [];
-  for(let i=6;i>=0;i--){
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const iso = d.toISOString().slice(0,10);
-    days.push(d.toLocaleDateString('en-GB',{weekday:'short'}));
-    series.push(state.sales.filter(s=>s.ts.slice(0,10)===iso).reduce((a,s)=>a+s.total,0));
-  }
+      // last 7-day series
+      const days = []; const series = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const iso = d.toISOString().slice(0, 10);
+        days.push(d.toLocaleDateString('en-GB', { weekday: 'short' }));
+        series.push(state.sales.filter(s => s.ts.slice(0, 10) === iso).reduce((a, s) => a + s.total, 0));
+      }
 
-  const greet = (() => { const h=new Date().getHours(); return h<12?'Good morning':h<17?'Good afternoon':'Good evening'; })();
+      const greet = (() => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; })();
 
-  $('#app').innerHTML = `
+      $('#app').innerHTML = `
   <div class="brand-grad text-white px-5 pt-12 pb-16 rounded-b-3xl shadow-md">
     <div class="flex items-center justify-between">
       <div>
-        <div class="text-white/80 text-xs">${greet}, ${session.role==='owner'?'Boss':'team'} 👋</div>
+        <div class="text-white/80 text-xs">${greet}, ${session.role === 'owner' ? 'Boss' : 'team'} 👋</div>
         <div class="text-xl font-bold mt-0.5">${session.name}</div>
       </div>
       <button onclick="goto('more')" class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center backdrop-blur">
@@ -454,18 +603,18 @@ function renderHome(){
     </div>
   </div>
   ${bottomNav()}`;
-}
+    }
 
-/* ====================================================================
-   POS  (search + barcode + cart)
-   ==================================================================== */
-function renderPOS(){
-  $('#app').innerHTML = `
-  ${shellHeader('Point of Sale', { sub:`${session.name} • ${fmtDate(todayISO())}` })}
+    /* ====================================================================
+       POS  (search + barcode + cart)
+       ==================================================================== */
+    function renderPOS() {
+      $('#app').innerHTML = `
+  ${shellHeader('Point of Sale', { sub: `${session.name} • ${fmtDate(todayISO())}` })}
   <div class="px-4 -mt-3">
     <div class="card flex items-center gap-2 px-3 py-2.5">
       <span class="text-stone-400">${ICON.search}</span>
-      <input id="pos-search" placeholder="Search by name or barcode" class="flex-1 outline-none text-sm" />
+      <input id="pos-search" placeholder="Search by product name or category…" class="flex-1 outline-none text-sm" />
     </div>
   </div>
 
@@ -475,14 +624,14 @@ function renderPOS(){
 
   <div class="px-4 mt-3 grid grid-cols-2 gap-3" id="pos-grid"></div>
 
-  ${cart.length>0 ? `
+  ${cart.length > 0 ? `
   <div class="fixed bottom-16 left-1/2 -translate-x-1/2 max-w-[480px] w-full px-4 z-30 no-print">
     <button onclick="goto('checkout')" class="w-full brand-grad text-white py-3.5 rounded-2xl shadow-xl flex items-center justify-between px-5">
       <div class="flex items-center gap-2">
-        <span class="bg-white/20 rounded-lg px-2 py-0.5 text-sm font-bold">${cart.reduce((a,c)=>a+c.qty,0)}</span>
+        <span class="bg-white/20 rounded-lg px-2 py-0.5 text-sm font-bold">${cart.reduce((a, c) => a + c.qty, 0)}</span>
         <span class="font-semibold">View cart</span>
       </div>
-      <div class="font-bold">${fmtNPR(cart.reduce((a,c)=>a+c.price*c.qty,0))}</div>
+      <div class="font-bold">${fmtNPR(cart.reduce((a, c) => a + c.price * c.qty, 0))}</div>
     </button>
   </div>` : ''}
 
@@ -492,26 +641,26 @@ function renderPOS(){
 
   ${bottomNav()}`;
 
-  // categories chips
-  const cats = ['All', ...new Set(state.products.map(p=>p.category))];
-  let activeCat = 'All';
-  const renderCats = () => {
-    $('#pos-cats').innerHTML = cats.map(c =>
-      `<button data-cat="${c}" class="cat-chip flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold ${c===activeCat?'bg-stone-900 text-white':'bg-white text-stone-600 border border-stone-200'}">${c}</button>`
-    ).join('');
-    $$('.cat-chip').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; renderCats(); renderGrid(); });
-  };
-  const renderGrid = () => {
-    const q = $('#pos-search').value.trim().toLowerCase();
-    const list = state.products.filter(p => {
-      const okCat = activeCat==='All' || p.category===activeCat;
-      const okQ = !q || p.name.toLowerCase().includes(q) || p.barcode.includes(q) || p.brand.toLowerCase().includes(q);
-      return okCat && okQ;
-    });
-    $('#pos-grid').innerHTML = list.length===0
-      ? `<div class="col-span-2 py-10 text-center text-stone-500 text-sm">No products. <button onclick="goto('product-new')" class="text-red-700 font-semibold underline">Add new</button></div>`
-      : list.map(p => `
-        <button onclick="addToCart('${p.id}')" class="card p-3 text-left active:scale-95 transition ${p.stock<=0?'opacity-50':''}" ${p.stock<=0?'disabled':''}>
+      // categories chips
+      const cats = ['All', ...new Set(state.products.map(p => p.category))];
+      let activeCat = 'All';
+      const renderCats = () => {
+        $('#pos-cats').innerHTML = cats.map(c =>
+          `<button data-cat="${c}" class="cat-chip flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold ${c === activeCat ? 'bg-stone-900 text-white' : 'bg-white text-stone-600 border border-stone-200'}">${c}</button>`
+        ).join('');
+        $$('.cat-chip').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; renderCats(); renderGrid(); });
+      };
+      const renderGrid = () => {
+        const q = $('#pos-search').value.trim().toLowerCase();
+        const list = state.products.filter(p => {
+          const okCat = activeCat === 'All' || p.category === activeCat;
+          const okQ = !q || p.name.toLowerCase().includes(q) || p.barcode.includes(q) || p.brand.toLowerCase().includes(q);
+          return okCat && okQ;
+        });
+        $('#pos-grid').innerHTML = list.length === 0
+          ? `<div class="col-span-2 py-10 text-center text-stone-500 text-sm">No products. <button onclick="goto('product-new')" class="text-red-700 font-semibold underline">Add new</button></div>`
+          : list.map(p => `
+        <button onclick="addToCart('${p.id}')" class="card p-3 text-left active:scale-95 transition ${p.stock <= 0 ? 'opacity-50' : ''}" ${p.stock <= 0 ? 'disabled' : ''}>
           <div class="aspect-square rounded-lg brand-grad/10 mb-2 flex items-center justify-center text-3xl bg-gradient-to-br from-red-50 to-amber-50">
             ${categoryEmoji(p.category)}
           </div>
@@ -519,47 +668,47 @@ function renderPOS(){
           <div class="text-sm font-semibold leading-tight mt-0.5 line-clamp-2 h-9">${p.name}</div>
           <div class="flex items-center justify-between mt-1.5">
             <div class="text-sm font-bold text-red-700">${fmtNPR(p.price)}</div>
-            <div class="text-[10px] ${p.stock<=p.lowStock?'text-amber-600':'text-stone-500'} font-medium">${p.stock} left</div>
+            <div class="text-[10px] ${p.stock <= p.lowStock ? 'text-amber-600' : 'text-stone-500'} font-medium">${p.stock} left</div>
           </div>
         </button>`).join('');
-  };
-  renderCats(); renderGrid();
-  $('#pos-search').addEventListener('input', renderGrid);
-  $('#pos-search').addEventListener('keydown', e => {
-    if(e.key==='Enter'){
-      const v = e.target.value.trim();
-      const p = state.products.find(p=>p.barcode===v);
-      if(p){ addToCart(p.id); e.target.value=''; renderGrid(); }
+      };
+      renderCats(); renderGrid();
+      $('#pos-search').addEventListener('input', renderGrid);
+      $('#pos-search').addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          const v = e.target.value.trim();
+          const p = state.products.find(p => p.barcode === v);
+          if (p) { addToCart(p.id); e.target.value = ''; renderGrid(); }
+        }
+      });
     }
-  });
-}
 
-function categoryEmoji(c){
-  return ({Whisky:'🥃',Beer:'🍺',Vodka:'🍸',Rum:'🥃',Wine:'🍷',Gin:'🍸',Brandy:'🥃'}[c]||'🍾');
-}
+    function categoryEmoji(c) {
+      return ({ Whisky: '🥃', Beer: '🍺', Vodka: '🍸', Rum: '🥃', Wine: '🍷', Gin: '🍸', Brandy: '🥃' }[c] || '🍾');
+    }
 
-function addToCart(pid){
-  const p = state.products.find(p=>p.id===pid);
-  if(!p) return;
-  if(p.stock<=0){ toast('Out of stock','warn'); return; }
-  const existing = cart.find(c=>c.productId===pid);
-  if(existing){
-    if(existing.qty+1 > p.stock){ toast('Not enough stock','warn'); return; }
-    existing.qty++;
-  } else {
-    cart.push({ productId:p.id, name:p.name, price:p.price, cost:p.cost, qty:1 });
-  }
-  setCart(cart);
-  toast(`Added ${p.name}`,'success');
-  if(route==='pos') renderPOS();
-}
+    function addToCart(pid) {
+      const p = state.products.find(p => p.id === pid);
+      if (!p) return;
+      if (p.stock <= 0) { toast('Out of stock', 'warn'); return; }
+      const existing = cart.find(c => c.productId === pid);
+      if (existing) {
+        if (existing.qty + 1 > p.stock) { toast('Not enough stock', 'warn'); return; }
+        existing.qty++;
+      } else {
+        cart.push({ productId: p.id, name: p.name, price: p.price, cost: p.cost, qty: 1 });
+      }
+      setCart(cart);
+      toast(`Added ${p.name}`, 'success');
+      if (route === 'pos') renderPOS();
+    }
 
-/* ====================================================================
-   BARCODE SCANNER
-   ==================================================================== */
-/* ── bottom sheet: Products + FAB ── */
-function openAddProductSheet(){
-  $('#modal-root').innerHTML = `
+    /* ====================================================================
+       BARCODE SCANNER
+       ==================================================================== */
+    /* ── bottom sheet: Products + FAB ── */
+    function openAddProductSheet() {
+      $('#modal-root').innerHTML = `
   <div class="modal-bd fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onclick="if(event.target===this)this.innerHTML=''">
     <div class="sheet bg-white w-full max-w-[480px] rounded-t-2xl p-5 pb-8">
       <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-5"></div>
@@ -584,11 +733,11 @@ function openAddProductSheet(){
       </div>
     </div>
   </div>`;
-}
+    }
 
-/* ── bottom sheet: POS + FAB ── */
-function openPOSAddSheet(){
-  $('#modal-root').innerHTML = `
+    /* ── bottom sheet: POS + FAB ── */
+    function openPOSAddSheet() {
+      $('#modal-root').innerHTML = `
   <div class="modal-bd fixed inset-0 bg-black/50 z-50 flex items-end justify-center" onclick="if(event.target===this)this.innerHTML=''">
     <div class="sheet bg-white w-full max-w-[480px] rounded-t-2xl p-5 pb-8">
       <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-5"></div>
@@ -602,45 +751,27 @@ function openPOSAddSheet(){
           </div>
           <span class="ml-auto text-stone-300">›</span>
         </button>
-        <div class="rounded-2xl border-2 border-stone-100 p-4">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-11 h-11 rounded-xl bg-stone-100 flex items-center justify-center text-stone-700 flex-shrink-0">${ICON.search}</div>
-            <div>
-              <div class="font-semibold">Enter Barcode Manually</div>
-              <div class="text-xs text-stone-500 mt-0.5">Type or paste barcode number</div>
-            </div>
-          </div>
-          <div class="flex gap-2">
-            <input id="pos-manual-bc" placeholder="e.g. 8901234500011" class="flex-1 border border-stone-200 rounded-xl px-3 py-2.5 outline-none font-mono text-sm ring-brand" />
-            <button onclick="posManualEntry()" class="brand-grad text-white px-4 rounded-xl font-semibold">Add</button>
-          </div>
-          <div class="text-[11px] text-stone-400 mt-2">Try: 8901234500011 (Khukri Rum)</div>
-        </div>
       </div>
     </div>
   </div>`;
-  setTimeout(()=>{
-    const inp = $('#pos-manual-bc');
-    if(inp){ inp.focus(); inp.addEventListener('keydown',e=>{ if(e.key==='Enter') posManualEntry(); }); }
-  }, 300);
-}
-function posManualEntry(){
-  const v = ($('#pos-manual-bc')||{}).value?.trim();
-  if(!v) return;
-  const p = state.products.find(p=>p.barcode===v);
-  $('#modal-root').innerHTML='';
-  if(p){ addToCart(p.id); toast(`${p.name} added to cart`,'success'); }
-  else { showProductNotFound(v); }
-}
+    }
+    function posManualEntry() {
+      const v = ($('#pos-manual-bc') || {}).value?.trim();
+      if (!v) return;
+      const p = state.products.find(p => p.barcode === v);
+      $('#modal-root').innerHTML = '';
+      if (p) { addToCart(p.id); toast(`${p.name} added to cart`, 'success'); }
+      else { showProductNotFound(v); }
+    }
 
-/* ── camera scanner (shared, context-aware) ── */
-function openScanner(ctx='pos'){
-  scannerCtx = ctx;
-  const m = $('#modal-root');
-  m.innerHTML = `
+    /* ── camera scanner (shared, context-aware) ── */
+    function openScanner(ctx = 'pos') {
+      scannerCtx = ctx;
+      const m = $('#modal-root');
+      m.innerHTML = `
   <div class="modal-bd fixed inset-0 bg-black/80 z-50 flex flex-col">
     <div class="flex items-center justify-between p-4 text-white">
-      <div class="font-semibold">${ctx==='products'?'Scan to Find / Add Product':'Scan Barcode'}</div>
+      <div class="font-semibold">${ctx === 'products' ? 'Scan to Find / Add Product' : 'Scan Barcode'}</div>
       <button onclick="closeScanner()" class="text-2xl leading-none">×</button>
     </div>
     <div id="scanner-box" class="flex-1 relative bg-black"></div>
@@ -653,39 +784,39 @@ function openScanner(ctx='pos'){
       <div class="text-[11px] text-white/50 mt-2">Try: 8901234500011 (Khukri Rum)</div>
     </div>
   </div>`;
-  setTimeout(()=>{
-    try{
-      scanner = new Html5Qrcode('scanner-box');
-      scanner.start({ facingMode:'environment' }, { fps:10, qrbox:{ width:260, height:160 } },
-        (decoded) => { handleScanned(decoded); },
-        () => {}
-      ).catch(()=>{ /* fallback to manual */ });
-    } catch(e){ /* ignore */ }
-  }, 100);
-  $('#manual-bc').addEventListener('keydown', e=>{ if(e.key==='Enter') manualBC(); });
-}
-function manualBC(){
-  const v = ($('#manual-bc')||{}).value?.trim();
-  if(v) handleScanned(v);
-}
-function handleScanned(code){
-  const p = state.products.find(p => p.barcode === code);
-  closeScanner();
-  if(scannerCtx === 'products'){
-    if(p){ goto('product-'+p.id); }
-    else { showProductNotFound(code); }
-  } else {
-    // POS context
-    if(p){ addToCart(p.id); if(route!=='pos') goto('pos'); }
-    else { showProductNotFound(code); }
-  }
-}
-function closeScanner(){
-  if(scanner){ try{ scanner.stop().then(()=>scanner.clear()).catch(()=>{});}catch(e){} scanner=null; }
-  $('#modal-root').innerHTML = '';
-}
-function showProductNotFound(code){
-  $('#modal-root').innerHTML = `
+      setTimeout(() => {
+        try {
+          scanner = new Html5Qrcode('scanner-box');
+          scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 260, height: 160 } },
+            (decoded) => { handleScanned(decoded); },
+            () => { }
+          ).catch(() => { /* fallback to manual */ });
+        } catch (e) { /* ignore */ }
+      }, 100);
+      $('#manual-bc').addEventListener('keydown', e => { if (e.key === 'Enter') manualBC(); });
+    }
+    function manualBC() {
+      const v = ($('#manual-bc') || {}).value?.trim();
+      if (v) handleScanned(v);
+    }
+    function handleScanned(code) {
+      const p = state.products.find(p => p.barcode === code);
+      closeScanner();
+      if (scannerCtx === 'products') {
+        if (p) { goto('product-' + p.id); }
+        else { showProductNotFound(code); }
+      } else {
+        // POS context
+        if (p) { addToCart(p.id); if (route !== 'pos') goto('pos'); }
+        else { showProductNotFound(code); }
+      }
+    }
+    function closeScanner() {
+      if (scanner) { try { scanner.stop().then(() => scanner.clear()).catch(() => { }); } catch (e) { } scanner = null; }
+      $('#modal-root').innerHTML = '';
+    }
+    function showProductNotFound(code) {
+      $('#modal-root').innerHTML = `
   <div class="modal-bd fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
     <div class="sheet bg-white w-full max-w-[480px] rounded-t-2xl p-5">
       <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-4"></div>
@@ -701,33 +832,33 @@ function showProductNotFound(code){
       </div>
     </div>
   </div>`;
-}
-function createWithBarcode(code){
-  $('#modal-root').innerHTML = '';
-  sessionStorage.setItem('ws_prefill_barcode', code);
-  goto('product-new');
-}
+    }
+    function createWithBarcode(code) {
+      $('#modal-root').innerHTML = '';
+      sessionStorage.setItem('ws_prefill_barcode', code);
+      goto('product-new');
+    }
 
-/* ====================================================================
-   CHECKOUT
-   ==================================================================== */
-function renderCheckout(){
-  if(cart.length===0){ goto('pos'); return; }
-  const subtotal = cart.reduce((a,c)=>a+c.price*c.qty,0);
-  const tax = subtotal * (state.settings.taxRate/100);
-  const discount = Number(sessionStorage.getItem('ws_discount')||0);
-  const total = subtotal + tax - discount;
+    /* ====================================================================
+       CHECKOUT
+       ==================================================================== */
+    function renderCheckout() {
+      if (cart.length === 0) { goto('pos'); return; }
+      const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0);
+      const tax = subtotal * (state.settings.taxRate / 100);
+      const discount = Number(sessionStorage.getItem('ws_discount') || 0);
+      const total = subtotal + tax - discount;
 
-  $('#app').innerHTML = `
-  ${shellHeader('Checkout', { back:true })}
+      $('#app').innerHTML = `
+  ${shellHeader('Checkout', { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-4">
     <div class="card p-3">
       <div class="text-xs font-semibold text-stone-500 mb-2 px-1">CART (${cart.length})</div>
-      ${cart.map((c,idx) => {
-        const p = state.products.find(p=>p.id===c.productId);
+      ${cart.map((c, idx) => {
+        const p = state.products.find(p => p.id === c.productId);
         return `
         <div class="flex items-center gap-3 py-2.5 border-t border-stone-100 first:border-0">
-          <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-red-50 to-amber-50 flex items-center justify-center text-xl flex-shrink-0">${categoryEmoji(p?.category||'')}</div>
+          <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-red-50 to-amber-50 flex items-center justify-center text-xl flex-shrink-0">${categoryEmoji(p?.category || '')}</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-medium truncate">${c.name}</div>
             <div class="text-[11px] text-stone-500">${fmtNPR(c.price)} ea</div>
@@ -746,13 +877,13 @@ function renderCheckout(){
       <div class="text-xs font-semibold text-stone-500 mb-2">CUSTOMER</div>
       <input id="ck-customer" placeholder="Walk-in customer (optional)" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm ring-brand" />
       <div class="text-xs font-semibold text-stone-500 mt-3 mb-2">DISCOUNT (NPR)</div>
-      <input id="ck-discount" type="number" inputmode="numeric" value="${discount||''}" placeholder="0" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm ring-brand" oninput="setDiscount(this.value)" />
+      <input id="ck-discount" type="number" inputmode="numeric" value="${discount || ''}" placeholder="0" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm ring-brand" oninput="setDiscount(this.value)" />
     </div>
 
     <div class="card p-4">
       <div class="flex justify-between text-sm py-1"><span class="text-stone-600">Subtotal</span><span class="font-medium">${fmtNPR(subtotal)}</span></div>
-      ${state.settings.taxRate>0 ? `<div class="flex justify-between text-sm py-1"><span class="text-stone-600">VAT (${state.settings.taxRate}%)</span><span class="font-medium">${fmtNPR(tax)}</span></div>` : ''}
-      ${discount>0 ? `<div class="flex justify-between text-sm py-1 text-emerald-700"><span>Discount</span><span>− ${fmtNPR(discount)}</span></div>` : ''}
+      ${state.settings.taxRate > 0 ? `<div class="flex justify-between text-sm py-1"><span class="text-stone-600">VAT (${state.settings.taxRate}%)</span><span class="font-medium">${fmtNPR(tax)}</span></div>` : ''}
+      ${discount > 0 ? `<div class="flex justify-between text-sm py-1 text-emerald-700"><span>Discount</span><span>− ${fmtNPR(discount)}</span></div>` : ''}
       <div class="flex justify-between text-base font-bold pt-2 mt-1 border-t border-stone-100"><span>Total</span><span class="text-red-700">${fmtNPR(total)}</span></div>
     </div>
 
@@ -781,68 +912,68 @@ function renderCheckout(){
     </button>
   </div>`;
 
-  let payment = 'cash';
-  $$('.pay-btn').forEach(b => b.onclick = () => {
-    payment = b.dataset.pay;
-    $$('.pay-btn').forEach(x => { x.classList.remove('border-red-700','bg-red-50'); x.classList.add('border-stone-200'); x.querySelector('span').classList.remove('text-red-700'); x.querySelector('span').classList.add('text-stone-600'); });
-    b.classList.remove('border-stone-200'); b.classList.add('border-red-700','bg-red-50');
-    b.querySelector('span').classList.remove('text-stone-600'); b.querySelector('span').classList.add('text-red-700');
-    sessionStorage.setItem('ws_payment', payment);
-  });
-  sessionStorage.setItem('ws_payment','cash');
-}
-function changeQty(idx, d){
-  const c = cart[idx];
-  const p = state.products.find(p=>p.id===c.productId);
-  const next = c.qty + d;
-  if(next<=0){ removeCart(idx); return; }
-  if(next > p.stock){ toast('Not enough stock','warn'); return; }
-  c.qty = next; setCart(cart); renderCheckout();
-}
-function removeCart(idx){ cart.splice(idx,1); setCart(cart); cart.length===0 ? goto('pos') : renderCheckout(); }
-function setDiscount(v){ sessionStorage.setItem('ws_discount', Number(v)||0); const subtotal = cart.reduce((a,c)=>a+c.price*c.qty,0); const total = subtotal - (Number(v)||0); /* re-render */ renderCheckout(); }
+      let payment = 'cash';
+      $$('.pay-btn').forEach(b => b.onclick = () => {
+        payment = b.dataset.pay;
+        $$('.pay-btn').forEach(x => { x.classList.remove('border-red-700', 'bg-red-50'); x.classList.add('border-stone-200'); x.querySelector('span').classList.remove('text-red-700'); x.querySelector('span').classList.add('text-stone-600'); });
+        b.classList.remove('border-stone-200'); b.classList.add('border-red-700', 'bg-red-50');
+        b.querySelector('span').classList.remove('text-stone-600'); b.querySelector('span').classList.add('text-red-700');
+        sessionStorage.setItem('ws_payment', payment);
+      });
+      sessionStorage.setItem('ws_payment', 'cash');
+    }
+    function changeQty(idx, d) {
+      const c = cart[idx];
+      const p = state.products.find(p => p.id === c.productId);
+      const next = c.qty + d;
+      if (next <= 0) { removeCart(idx); return; }
+      if (next > p.stock) { toast('Not enough stock', 'warn'); return; }
+      c.qty = next; setCart(cart); renderCheckout();
+    }
+    function removeCart(idx) { cart.splice(idx, 1); setCart(cart); cart.length === 0 ? goto('pos') : renderCheckout(); }
+    function setDiscount(v) { sessionStorage.setItem('ws_discount', Number(v) || 0); const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0); const total = subtotal - (Number(v) || 0); /* re-render */ renderCheckout(); }
 
-function completeSale(){
-  const subtotal = cart.reduce((a,c)=>a+c.price*c.qty,0);
-  const tax = subtotal * (state.settings.taxRate/100);
-  const discount = Number(sessionStorage.getItem('ws_discount')||0);
-  const total = subtotal + tax - discount;
-  const cost = cart.reduce((a,c)=>a+c.cost*c.qty,0);
-  const payment = sessionStorage.getItem('ws_payment')||'cash';
-  const customer = ($('#ck-customer')?.value||'').trim() || 'Walk-in';
+    function completeSale() {
+      const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0);
+      const tax = subtotal * (state.settings.taxRate / 100);
+      const discount = Number(sessionStorage.getItem('ws_discount') || 0);
+      const total = subtotal + tax - discount;
+      const cost = cart.reduce((a, c) => a + c.cost * c.qty, 0);
+      const payment = sessionStorage.getItem('ws_payment') || 'cash';
+      const customer = ($('#ck-customer')?.value || '').trim() || 'Walk-in';
 
-  if(payment==='qr'){ showQRPayment(total, finalize); return; }
-  finalize();
+      if (payment === 'qr') { showQRPayment(total, finalize); return; }
+      finalize();
 
-  function finalize(){
-    const sale = {
-      id: uid('s'),
-      invoice: 'INV-'+String(1000+state.sales.length+1),
-      items: cart.map(c=>({...c})),
-      subtotal, tax, discount, total, cost,
-      profit: subtotal - cost - discount,
-      payment, customer,
-      cashier: session.name,
-      ts: nowISO()
-    };
-    state.sales.push(sale);
-    // deduct stock
-    cart.forEach(c => {
-      const p = state.products.find(p=>p.id===c.productId);
-      if(p){ p.stock = Math.max(0, p.stock - c.qty); }
-    });
-    audit('sale_create', `${sale.invoice} • ${fmtNPR(total)} (${payment})`);
-    Store.save();
-    setCart([]);
-    sessionStorage.removeItem('ws_discount');
-    sessionStorage.removeItem('ws_payment');
-    toast('Sale completed','success');
-    goto('receipt/'+sale.id);
-  }
-}
+      function finalize() {
+        const sale = {
+          id: uid('s'),
+          invoice: 'INV-' + String(1000 + state.sales.length + 1),
+          items: cart.map(c => ({ ...c })),
+          subtotal, tax, discount, total, cost,
+          profit: subtotal - cost - discount,
+          payment, customer,
+          cashier: session.name,
+          ts: nowISO()
+        };
+        state.sales.push(sale);
+        // deduct stock
+        cart.forEach(c => {
+          const p = state.products.find(p => p.id === c.productId);
+          if (p) { p.stock = Math.max(0, p.stock - c.qty); }
+        });
+        audit('sale_create', `${sale.invoice} • ${fmtNPR(total)} (${payment})`);
+        Store.save();
+        setCart([]);
+        sessionStorage.removeItem('ws_discount');
+        sessionStorage.removeItem('ws_payment');
+        toast('Sale completed', 'success');
+        goto('receipt/' + sale.id);
+      }
+    }
 
-function showQRPayment(amount, onPaid){
-  $('#modal-root').innerHTML = `
+    function showQRPayment(amount, onPaid) {
+      $('#modal-root').innerHTML = `
   <div class="modal-bd fixed inset-0 bg-black/60 z-50 flex items-end justify-center">
     <div class="sheet bg-white w-full max-w-[480px] rounded-t-3xl p-6 text-center">
       <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-4"></div>
@@ -865,42 +996,42 @@ function showQRPayment(amount, onPaid){
       </div>
     </div>
   </div>`;
-  $('#qr-confirm').onclick = () => { $('#modal-root').innerHTML=''; onPaid(); };
-}
-
-function generateQRBlocks(){
-  // Decorative pseudo QR – not a real payment QR
-  const cells = 21; const size = 100/cells;
-  let svg = '';
-  // 3 finder patterns
-  const finder = (x,y) => `
-    <rect x="${x}" y="${y}" width="${size*7}" height="${size*7}" fill="black"/>
-    <rect x="${x+size}" y="${y+size}" width="${size*5}" height="${size*5}" fill="white"/>
-    <rect x="${x+size*2}" y="${y+size*2}" width="${size*3}" height="${size*3}" fill="black"/>`;
-  svg += finder(0,0) + finder(size*14,0) + finder(0,size*14);
-  // random data dots
-  let seed = 42;
-  for(let r=0;r<cells;r++){
-    for(let c=0;c<cells;c++){
-      // skip finder regions
-      if((r<7&&c<7)||(r<7&&c>=14)||(r>=14&&c<7)) continue;
-      seed = (seed*9301+49297)%233280;
-      if((seed/233280) > 0.55){
-        svg += `<rect x="${c*size}" y="${r*size}" width="${size}" height="${size}" fill="black"/>`;
-      }
+      $('#qr-confirm').onclick = () => { $('#modal-root').innerHTML = ''; onPaid(); };
     }
-  }
-  return svg;
-}
 
-/* ====================================================================
-   RECEIPT
-   ==================================================================== */
-function renderReceipt(saleId){
-  const s = state.sales.find(x=>x.id===saleId);
-  if(!s){ goto('home'); return; }
-  $('#app').innerHTML = `
-  ${shellHeader('Receipt', { back:true })}
+    function generateQRBlocks() {
+      // Decorative pseudo QR – not a real payment QR
+      const cells = 21; const size = 100 / cells;
+      let svg = '';
+      // 3 finder patterns
+      const finder = (x, y) => `
+    <rect x="${x}" y="${y}" width="${size * 7}" height="${size * 7}" fill="black"/>
+    <rect x="${x + size}" y="${y + size}" width="${size * 5}" height="${size * 5}" fill="white"/>
+    <rect x="${x + size * 2}" y="${y + size * 2}" width="${size * 3}" height="${size * 3}" fill="black"/>`;
+      svg += finder(0, 0) + finder(size * 14, 0) + finder(0, size * 14);
+      // random data dots
+      let seed = 42;
+      for (let r = 0; r < cells; r++) {
+        for (let c = 0; c < cells; c++) {
+          // skip finder regions
+          if ((r < 7 && c < 7) || (r < 7 && c >= 14) || (r >= 14 && c < 7)) continue;
+          seed = (seed * 9301 + 49297) % 233280;
+          if ((seed / 233280) > 0.55) {
+            svg += `<rect x="${c * size}" y="${r * size}" width="${size}" height="${size}" fill="black"/>`;
+          }
+        }
+      }
+      return svg;
+    }
+
+    /* ====================================================================
+       RECEIPT
+       ==================================================================== */
+    function renderReceipt(saleId) {
+      const s = state.sales.find(x => x.id === saleId);
+      if (!s) { goto('home'); return; }
+      $('#app').innerHTML = `
+  ${shellHeader('Receipt', { back: true })}
   <div class="px-4 mt-3 space-y-3 pb-6">
     <div class="card p-4 bg-emerald-50 border border-emerald-100 flex items-center gap-3">
       <div class="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center">${ICON.check}</div>
@@ -936,13 +1067,13 @@ function renderReceipt(saleId){
             <div class="col-span-6 truncate pr-1">${i.name}</div>
             <div class="col-span-2 text-center">${i.qty}</div>
             <div class="col-span-2 text-right">${fmtInt(i.price)}</div>
-            <div class="col-span-2 text-right">${fmtInt(i.price*i.qty)}</div>
+            <div class="col-span-2 text-right">${fmtInt(i.price * i.qty)}</div>
           </div>`).join('')}
       </div>
       <div class="border-t border-dashed border-stone-300 mt-2 pt-2 text-[11px] space-y-0.5">
         <div class="flex justify-between"><span>Subtotal</span><span>${fmtNPR(s.subtotal)}</span></div>
-        ${s.discount>0?`<div class="flex justify-between"><span>Discount</span><span>− ${fmtNPR(s.discount)}</span></div>`:''}
-        ${s.tax>0?`<div class="flex justify-between"><span>VAT</span><span>${fmtNPR(s.tax)}</span></div>`:''}
+        ${s.discount > 0 ? `<div class="flex justify-between"><span>Discount</span><span>− ${fmtNPR(s.discount)}</span></div>` : ''}
+        ${s.tax > 0 ? `<div class="flex justify-between"><span>VAT</span><span>${fmtNPR(s.tax)}</span></div>` : ''}
         <div class="flex justify-between font-bold text-sm pt-1 border-t border-dashed border-stone-300 mt-1"><span>TOTAL</span><span>${fmtNPR(s.total)}</span></div>
         <div class="flex justify-between"><span>Paid via</span><span class="uppercase">${s.payment}</span></div>
       </div>
@@ -957,20 +1088,20 @@ function renderReceipt(saleId){
       <button onclick="goto('pos')" class="brand-grad text-white py-3 rounded-xl text-sm font-semibold flex flex-col items-center gap-1">${ICON.cart}<span>New sale</span></button>
     </div>
   </div>`;
-}
-function shareReceipt(id){
-  const s = state.sales.find(x=>x.id===id);
-  const text = `${state.shop.name}\n${s.invoice}\n${fmtDate(s.ts)} ${fmtTime(s.ts)}\n\n${s.items.map(i=>`${i.name} x${i.qty} = ${fmtNPR(i.price*i.qty)}`).join('\n')}\n\nTotal: ${fmtNPR(s.total)}\nPaid: ${s.payment.toUpperCase()}\n\nThank you!`;
-  if(navigator.share){ navigator.share({ title:s.invoice, text }).catch(()=>{}); }
-  else { navigator.clipboard.writeText(text); toast('Receipt copied','success'); }
-}
+    }
+    function shareReceipt(id) {
+      const s = state.sales.find(x => x.id === id);
+      const text = `${state.shop.name}\n${s.invoice}\n${fmtDate(s.ts)} ${fmtTime(s.ts)}\n\n${s.items.map(i => `${i.name} x${i.qty} = ${fmtNPR(i.price * i.qty)}`).join('\n')}\n\nTotal: ${fmtNPR(s.total)}\nPaid: ${s.payment.toUpperCase()}\n\nThank you!`;
+      if (navigator.share) { navigator.share({ title: s.invoice, text }).catch(() => { }); }
+      else { navigator.clipboard.writeText(text); toast('Receipt copied', 'success'); }
+    }
 
-/* ====================================================================
-   PRODUCTS
-   ==================================================================== */
-function renderProducts(){
-  $('#app').innerHTML = `
-  ${shellHeader('Products', { sub:`${state.products.length} SKUs in stock` })}
+    /* ====================================================================
+       PRODUCTS
+       ==================================================================== */
+    function renderProducts() {
+      $('#app').innerHTML = `
+  ${shellHeader('Products', { sub: `${state.products.length} SKUs in stock` })}
   <div class="px-4 -mt-2">
     <div class="card flex items-center gap-2 px-3 py-2.5">
       <span class="text-stone-400">${ICON.search}</span>
@@ -988,49 +1119,49 @@ function renderProducts(){
   </button>
   ${bottomNav()}`;
 
-  let filter = 'all';
-  const renderList = () => {
-    const q = $('#pr-search').value.trim().toLowerCase();
-    let list = state.products;
-    if(filter==='low') list = list.filter(p => p.stock<=p.lowStock && p.stock>0);
-    if(filter==='out') list = list.filter(p => p.stock===0);
-    if(q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.barcode.includes(q) || p.brand.toLowerCase().includes(q));
-    $('#pr-list').innerHTML = list.length===0
-      ? `<div class="text-center py-12 text-stone-500 text-sm">No products found</div>`
-      : list.map(p => `
+      let filter = 'all';
+      const renderList = () => {
+        const q = $('#pr-search').value.trim().toLowerCase();
+        let list = state.products;
+        if (filter === 'low') list = list.filter(p => p.stock <= p.lowStock && p.stock > 0);
+        if (filter === 'out') list = list.filter(p => p.stock === 0);
+        if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.barcode.includes(q) || p.brand.toLowerCase().includes(q));
+        $('#pr-list').innerHTML = list.length === 0
+          ? `<div class="text-center py-12 text-stone-500 text-sm">No products found</div>`
+          : list.map(p => `
         <button onclick="goto('product/${p.id}')" class="card w-full flex items-center gap-3 p-3 text-left active:scale-[.98] transition">
           <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-amber-50 flex items-center justify-center text-2xl flex-shrink-0">${categoryEmoji(p.category)}</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-semibold truncate">${p.name}</div>
             <div class="text-[11px] text-stone-500 mt-0.5">${p.category} • ${p.barcode}</div>
             <div class="flex items-center gap-1.5 mt-1">
-              <span class="badge ${p.stock===0?'bg-red-100 text-red-700':p.stock<=p.lowStock?'bg-amber-100 text-amber-800':'bg-emerald-100 text-emerald-800'}">
-                ${p.stock===0?'Out of stock':p.stock<=p.lowStock?p.stock+' left (low)':p.stock+' in stock'}
+              <span class="badge ${p.stock === 0 ? 'bg-red-100 text-red-700' : p.stock <= p.lowStock ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+                ${p.stock === 0 ? 'Out of stock' : p.stock <= p.lowStock ? p.stock + ' left (low)' : p.stock + ' in stock'}
               </span>
             </div>
           </div>
           <div class="text-right flex-shrink-0">
             <div class="text-sm font-bold text-red-700">${fmtNPR(p.price)}</div>
-            <div class="text-[10px] text-stone-400 mt-1">${ICON.arrow.replace('width="16"','width="14"')}</div>
+            <div class="text-[10px] text-stone-400 mt-1">${ICON.arrow.replace('width="16"', 'width="14"')}</div>
           </div>
         </button>`).join('');
-  };
-  renderList();
-  $('#pr-search').addEventListener('input', renderList);
-  $$('.filt-chip').forEach(b => b.onclick = () => {
-    filter = b.dataset.f;
-    $$('.filt-chip').forEach(x => { x.classList.remove('bg-stone-900','text-white'); x.classList.add('bg-white','text-stone-600','border','border-stone-200'); });
-    b.classList.add('bg-stone-900','text-white'); b.classList.remove('bg-white','text-stone-600','border','border-stone-200');
-    renderList();
-  });
-}
+      };
+      renderList();
+      $('#pr-search').addEventListener('input', renderList);
+      $$('.filt-chip').forEach(b => b.onclick = () => {
+        filter = b.dataset.f;
+        $$('.filt-chip').forEach(x => { x.classList.remove('bg-stone-900', 'text-white'); x.classList.add('bg-white', 'text-stone-600', 'border', 'border-stone-200'); });
+        b.classList.add('bg-stone-900', 'text-white'); b.classList.remove('bg-white', 'text-stone-600', 'border', 'border-stone-200');
+        renderList();
+      });
+    }
 
-function renderProductDetail(pid){
-  const p = state.products.find(p=>p.id===pid);
-  if(!p){ goto('products'); return; }
-  const recent = state.sales.filter(s => s.items.some(i=>i.productId===pid)).slice(-10).reverse();
-  $('#app').innerHTML = `
-  ${shellHeader(p.name, { back:true })}
+    function renderProductDetail(pid) {
+      const p = state.products.find(p => p.id === pid);
+      if (!p) { goto('products'); return; }
+      const recent = state.sales.filter(s => s.items.some(i => i.productId === pid)).slice(-10).reverse();
+      $('#app').innerHTML = `
+  ${shellHeader(p.name, { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <div class="card p-5">
       <div class="aspect-video rounded-xl bg-gradient-to-br from-red-50 to-amber-50 flex items-center justify-center text-6xl">${categoryEmoji(p.category)}</div>
@@ -1047,9 +1178,9 @@ function renderProductDetail(pid){
       </div>
     </div>
     <div class="grid grid-cols-3 gap-2">
-      <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Stock</div><div class="text-lg font-bold mt-1 ${p.stock<=p.lowStock?'text-amber-600':''}">${p.stock}</div></div>
-      <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Margin</div><div class="text-lg font-bold mt-1 text-emerald-600">${Math.round(((p.price-p.cost)/p.price)*100)}%</div></div>
-      <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Value</div><div class="text-sm font-bold mt-1">${fmtNPR(p.cost*p.stock)}</div></div>
+      <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Stock</div><div class="text-lg font-bold mt-1 ${p.stock <= p.lowStock ? 'text-amber-600' : ''}">${p.stock}</div></div>
+      <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Margin</div><div class="text-lg font-bold mt-1 text-emerald-600">${Math.round(((p.price - p.cost) / p.price) * 100)}%</div></div>
+      <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Value</div><div class="text-sm font-bold mt-1">${fmtNPR(p.cost * p.stock)}</div></div>
     </div>
     <div class="card p-4">
       <div class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Barcode</div>
@@ -1057,54 +1188,54 @@ function renderProductDetail(pid){
     </div>
     <div class="card p-4">
       <div class="text-xs font-semibold text-stone-500 mb-2">RECENT SALES</div>
-      ${recent.length===0
-        ? `<div class="text-center py-2 text-sm text-stone-500">No sales yet</div>`
-        : recent.map(s => {
-          const line = s.items.find(i=>i.productId===pid);
-          return `<div class="flex items-center justify-between py-2 border-t border-stone-100 first:border-0">
+      ${recent.length === 0
+          ? `<div class="text-center py-2 text-sm text-stone-500">No sales yet</div>`
+          : recent.map(s => {
+            const line = s.items.find(i => i.productId === pid);
+            return `<div class="flex items-center justify-between py-2 border-t border-stone-100 first:border-0">
             <div>
               <div class="text-sm font-medium">${s.invoice}</div>
               <div class="text-[11px] text-stone-500">${fmtDate(s.ts)} ${fmtTime(s.ts)} • ${line.qty} × ${fmtNPR(line.price)}</div>
             </div>
-            <div class="text-sm font-semibold">${fmtNPR(line.qty*line.price)}</div>
+            <div class="text-sm font-semibold">${fmtNPR(line.qty * line.price)}</div>
           </div>`;
-        }).join('')}
+          }).join('')}
     </div>
     <div class="grid grid-cols-2 gap-2">
-      <button onclick="addToCart('${p.id}')" ${p.stock<=0?'disabled':''} class="card py-3 font-semibold ${p.stock<=0?'opacity-40':''}">${ICON.cart}<span class="ml-1.5">Add to cart</span></button>
+      <button onclick="addToCart('${p.id}')" ${p.stock <= 0 ? 'disabled' : ''} class="card py-3 font-semibold ${p.stock <= 0 ? 'opacity-40' : ''}">${ICON.cart}<span class="ml-1.5">Add to cart</span></button>
       <button onclick="editProduct('${p.id}')" class="brand-grad text-white py-3 rounded-xl font-semibold flex items-center justify-center">${ICON.edit}<span class="ml-1.5">Edit</span></button>
     </div>
-    ${session.role==='owner' ? `<button onclick="deleteProduct('${p.id}')" class="w-full py-3 text-red-600 font-semibold text-sm">Delete product</button>` : ''}
+    ${session.role === 'owner' ? `<button onclick="deleteProduct('${p.id}')" class="w-full py-3 text-red-600 font-semibold text-sm">Delete product</button>` : ''}
   </div>`;
-}
-function editProduct(pid){ sessionStorage.setItem('ws_edit_pid', pid); goto('product-edit'); }
-function deleteProduct(pid){
-  if(!confirm('Delete this product? This cannot be undone.')) return;
-  const p = state.products.find(p=>p.id===pid);
-  state.products = state.products.filter(p=>p.id!==pid);
-  audit('product_delete', `Deleted: ${p.name}`);
-  Store.save();
-  toast('Product deleted','info');
-  goto('products');
-}
+    }
+    function editProduct(pid) { sessionStorage.setItem('ws_edit_pid', pid); goto('product-edit'); }
+    function deleteProduct(pid) {
+      if (!confirm('Delete this product? This cannot be undone.')) return;
+      const p = state.products.find(p => p.id === pid);
+      state.products = state.products.filter(p => p.id !== pid);
+      audit('product_delete', `Deleted: ${p.name}`);
+      Store.save();
+      toast('Product deleted', 'info');
+      goto('products');
+    }
 
-function renderProductForm(pid){
-  const editing = pid ? state.products.find(p=>p.id===pid) : null;
-  const prefBC = sessionStorage.getItem('ws_prefill_barcode')||'';
-  sessionStorage.removeItem('ws_prefill_barcode');
-  const cats = ['Whisky','Beer','Vodka','Rum','Wine','Gin','Brandy'];
-  $('#app').innerHTML = `
-  ${shellHeader(editing?'Edit Product':'New Product', { back:true })}
+    function renderProductForm(pid) {
+      const editing = pid ? state.products.find(p => p.id === pid) : null;
+      const prefBC = sessionStorage.getItem('ws_prefill_barcode') || '';
+      sessionStorage.removeItem('ws_prefill_barcode');
+      const cats = ['Whisky', 'Beer', 'Vodka', 'Rum', 'Wine', 'Gin', 'Brandy'];
+      $('#app').innerHTML = `
+  ${shellHeader(editing ? 'Edit Product' : 'New Product', { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <div class="card p-4 space-y-3">
       <div>
         <label class="block text-xs font-semibold text-stone-600 mb-1">Product name *</label>
-        <input id="pf-name" placeholder="e.g. Khukri Rum 750ml" value="${editing?.name||''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+        <input id="pf-name" placeholder="e.g. Khukri Rum 750ml" value="${editing?.name || ''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
       </div>
       <div>
         <label class="block text-xs font-semibold text-stone-600 mb-1">Barcode</label>
         <div class="flex gap-2">
-          <input id="pf-barcode" placeholder="Scan or type" value="${editing?.barcode||prefBC||''}" class="flex-1 border border-stone-200 rounded-xl px-3 py-2.5 ring-brand font-mono text-sm" />
+          <input id="pf-barcode" placeholder="Scan or type" value="${editing?.barcode || prefBC || ''}" class="flex-1 border border-stone-200 rounded-xl px-3 py-2.5 ring-brand font-mono text-sm" />
           <button onclick="scanForForm()" class="bg-stone-900 text-white px-3.5 rounded-xl">${ICON.scan}</button>
         </div>
       </div>
@@ -1112,17 +1243,17 @@ function renderProductForm(pid){
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Category</label>
           <select id="pf-cat" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand bg-white">
-            ${cats.map(c=>`<option ${editing?.category===c?'selected':''}>${c}</option>`).join('')}
+            ${cats.map(c => `<option ${editing?.category === c ? 'selected' : ''}>${c}</option>`).join('')}
           </select>
         </div>
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Unit / size</label>
-          <input id="pf-unit" placeholder="e.g. 750ml" value="${editing?.unit||''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+          <input id="pf-unit" placeholder="e.g. 750ml" value="${editing?.unit || ''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
         </div>
       </div>
       <div>
         <label class="block text-xs font-semibold text-stone-600 mb-1">Brand</label>
-        <input id="pf-brand" placeholder="e.g. Khukri" value="${editing?.brand||''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+        <input id="pf-brand" placeholder="e.g. Khukri" value="${editing?.brand || ''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
       </div>
     </div>
 
@@ -1131,11 +1262,11 @@ function renderProductForm(pid){
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Cost (NPR) *</label>
-          <input id="pf-cost" type="number" inputmode="decimal" value="${editing?.cost||''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+          <input id="pf-cost" type="number" inputmode="decimal" value="${editing?.cost || ''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
         </div>
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Sell price (NPR) *</label>
-          <input id="pf-price" type="number" inputmode="decimal" value="${editing?.price||''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+          <input id="pf-price" type="number" inputmode="decimal" value="${editing?.price || ''}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
         </div>
       </div>
     </div>
@@ -1145,133 +1276,133 @@ function renderProductForm(pid){
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Opening stock *</label>
-          <input id="pf-stock" type="number" inputmode="numeric" value="${editing?.stock||0}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+          <input id="pf-stock" type="number" inputmode="numeric" value="${editing?.stock || 0}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
         </div>
         <div>
           <label class="block text-xs font-semibold text-stone-600 mb-1">Low stock alert at</label>
-          <input id="pf-low" type="number" inputmode="numeric" value="${editing?.lowStock||5}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
+          <input id="pf-low" type="number" inputmode="numeric" value="${editing?.lowStock || 5}" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand" />
         </div>
       </div>
     </div>
 
-    <button onclick="saveProduct(${pid?`'${pid}'`:'null'})" class="w-full brand-grad text-white py-3.5 rounded-2xl font-bold shadow-md">
-      ${editing?'Save changes':'Create product'}
+    <button onclick="saveProduct(${pid ? `'${pid}'` : 'null'})" class="w-full brand-grad text-white py-3.5 rounded-2xl font-bold shadow-md">
+      ${editing ? 'Save changes' : 'Create product'}
     </button>
   </div>`;
-}
-function scanForForm(){
-  openScanner('products');
-  // override handleScanned briefly
-  const orig = window.handleScanned;
-  window.handleScanned = (code) => {
-    closeScanner();
-    if($('#pf-barcode')) $('#pf-barcode').value = code;
-    window.handleScanned = orig;
-  };
-}
-function saveProduct(pid){
-  const data = {
-    name: $('#pf-name').value.trim(),
-    barcode: $('#pf-barcode').value.trim(),
-    category: $('#pf-cat').value,
-    unit: $('#pf-unit').value.trim(),
-    brand: $('#pf-brand').value.trim(),
-    cost: parseFloat($('#pf-cost').value)||0,
-    price: parseFloat($('#pf-price').value)||0,
-    stock: parseInt($('#pf-stock').value)||0,
-    lowStock: parseInt($('#pf-low').value)||5
-  };
-  if(!data.name){ toast('Name is required','error'); return; }
-  if(!data.price || !data.cost){ toast('Price and cost are required','error'); return; }
-  if(!data.barcode) data.barcode = String(Date.now()).slice(-13);
-  // duplicate barcode check
-  if(state.products.some(p => p.barcode===data.barcode && p.id!==pid)){
-    toast('Barcode already exists','error'); return;
-  }
-  if(pid){
-    const p = state.products.find(x=>x.id===pid);
-    Object.assign(p, data);
-    audit('product_update', `Updated: ${data.name}`);
-    toast('Product updated','success');
-  } else {
-    const np = { id: uid('p'), ...data };
-    state.products.push(np);
-    audit('product_create', `Created: ${data.name} (stock ${data.stock})`);
-    toast('Product created','success');
-  }
-  Store.save();
-  goto('products');
-}
+    }
+    function scanForForm() {
+      openScanner('products');
+      // override handleScanned briefly
+      const orig = window.handleScanned;
+      window.handleScanned = (code) => {
+        closeScanner();
+        if ($('#pf-barcode')) $('#pf-barcode').value = code;
+        window.handleScanned = orig;
+      };
+    }
+    function saveProduct(pid) {
+      const data = {
+        name: $('#pf-name').value.trim(),
+        barcode: $('#pf-barcode').value.trim(),
+        category: $('#pf-cat').value,
+        unit: $('#pf-unit').value.trim(),
+        brand: $('#pf-brand').value.trim(),
+        cost: parseFloat($('#pf-cost').value) || 0,
+        price: parseFloat($('#pf-price').value) || 0,
+        stock: parseInt($('#pf-stock').value) || 0,
+        lowStock: parseInt($('#pf-low').value) || 5
+      };
+      if (!data.name) { toast('Name is required', 'error'); return; }
+      if (!data.price || !data.cost) { toast('Price and cost are required', 'error'); return; }
+      if (!data.barcode) data.barcode = String(Date.now()).slice(-13);
+      // duplicate barcode check
+      if (state.products.some(p => p.barcode === data.barcode && p.id !== pid)) {
+        toast('Barcode already exists', 'error'); return;
+      }
+      if (pid) {
+        const p = state.products.find(x => x.id === pid);
+        Object.assign(p, data);
+        audit('product_update', `Updated: ${data.name}`);
+        toast('Product updated', 'success');
+      } else {
+        const np = { id: uid('p'), ...data };
+        state.products.push(np);
+        audit('product_create', `Created: ${data.name} (stock ${data.stock})`);
+        toast('Product created', 'success');
+      }
+      Store.save();
+      goto('products');
+    }
 
-/* ====================================================================
-   REPORTS
-   ==================================================================== */
-function renderReports(){
-  let range = sessionStorage.getItem('ws_range')||'today';
-  $('#app').innerHTML = `
-  ${shellHeader('Reports', { sub:'Sales, profit, stock & top sellers' })}
+    /* ====================================================================
+       REPORTS
+       ==================================================================== */
+    function renderReports() {
+      let range = sessionStorage.getItem('ws_range') || 'today';
+      $('#app').innerHTML = `
+  ${shellHeader('Reports', { sub: 'Sales, profit, stock & top sellers' })}
   <div class="px-4 -mt-2">
     <div class="card p-1 flex gap-1" id="rng-tabs">
-      ${['today','week','month'].map(r => `
-        <button data-rng="${r}" class="rng-tab flex-1 py-2 rounded-lg text-xs font-semibold ${range===r?'bg-stone-900 text-white':'text-stone-600'}">${r==='today'?'Today':r==='week'?'7 Days':'30 Days'}</button>
+      ${['today', 'week', 'month'].map(r => `
+        <button data-rng="${r}" class="rng-tab flex-1 py-2 rounded-lg text-xs font-semibold ${range === r ? 'bg-stone-900 text-white' : 'text-stone-600'}">${r === 'today' ? 'Today' : r === 'week' ? '7 Days' : '30 Days'}</button>
       `).join('')}
     </div>
   </div>
   <div id="rep-body" class="px-4 mt-3 pb-6 space-y-3"></div>
   ${bottomNav()}`;
 
-  $$('.rng-tab').forEach(b => b.onclick = () => {
-    range = b.dataset.rng; sessionStorage.setItem('ws_range', range);
-    $$('.rng-tab').forEach(x => { x.classList.remove('bg-stone-900','text-white'); x.classList.add('text-stone-600'); });
-    b.classList.add('bg-stone-900','text-white'); b.classList.remove('text-stone-600');
-    drawReport();
-  });
-  drawReport();
+      $$('.rng-tab').forEach(b => b.onclick = () => {
+        range = b.dataset.rng; sessionStorage.setItem('ws_range', range);
+        $$('.rng-tab').forEach(x => { x.classList.remove('bg-stone-900', 'text-white'); x.classList.add('text-stone-600'); });
+        b.classList.add('bg-stone-900', 'text-white'); b.classList.remove('text-stone-600');
+        drawReport();
+      });
+      drawReport();
 
-  function drawReport(){
-    const now = Date.now();
-    const cutoff = range==='today' ? new Date().setHours(0,0,0,0)
-                 : range==='week' ? now - 7*86400000
-                 : now - 30*86400000;
-    const sales = state.sales.filter(s => new Date(s.ts).getTime() >= cutoff);
-    const expenses = state.expenses.filter(e => new Date(e.ts).getTime() >= cutoff);
-    const expTotal = expenses.reduce((a,e)=>a+e.amount,0);
-    const revenue = sales.reduce((a,s)=>a+s.total,0);
-    const profit = sales.reduce((a,s)=>a+s.profit,0) - expTotal;
-    const cashRev = sales.filter(s=>s.payment==='cash').reduce((a,s)=>a+s.total,0);
-    const lowStock = state.products.filter(p => p.stock<=p.lowStock);
-    const qrRev = sales.filter(s=>s.payment==='qr').reduce((a,s)=>a+s.total,0);
-    const itemCount = sales.reduce((a,s)=>a+s.items.reduce((b,i)=>b+i.qty,0),0);
+      function drawReport() {
+        const now = Date.now();
+        const cutoff = range === 'today' ? new Date().setHours(0, 0, 0, 0)
+          : range === 'week' ? now - 7 * 86400000
+            : now - 30 * 86400000;
+        const sales = state.sales.filter(s => new Date(s.ts).getTime() >= cutoff);
+        const expenses = state.expenses.filter(e => new Date(e.ts).getTime() >= cutoff);
+        const expTotal = expenses.reduce((a, e) => a + e.amount, 0);
+        const revenue = sales.reduce((a, s) => a + s.total, 0);
+        const profit = sales.reduce((a, s) => a + s.profit, 0) - expTotal;
+        const cashRev = sales.filter(s => s.payment === 'cash').reduce((a, s) => a + s.total, 0);
+        const lowStock = state.products.filter(p => p.stock <= p.lowStock);
+        const qrRev = sales.filter(s => s.payment === 'qr').reduce((a, s) => a + s.total, 0);
+        const itemCount = sales.reduce((a, s) => a + s.items.reduce((b, i) => b + i.qty, 0), 0);
 
-    // top sellers
-    const tally = {};
-    sales.forEach(s => s.items.forEach(i => {
-      tally[i.productId] = tally[i.productId] || { name:i.name, qty:0, rev:0 };
-      tally[i.productId].qty += i.qty;
-      tally[i.productId].rev += i.qty*i.price;
-    }));
-    const top = Object.values(tally).sort((a,b)=>b.qty-a.qty).slice(0,5);
+        // top sellers
+        const tally = {};
+        sales.forEach(s => s.items.forEach(i => {
+          tally[i.productId] = tally[i.productId] || { name: i.name, qty: 0, rev: 0 };
+          tally[i.productId].qty += i.qty;
+          tally[i.productId].rev += i.qty * i.price;
+        }));
+        const top = Object.values(tally).sort((a, b) => b.qty - a.qty).slice(0, 5);
 
-    // series for chart
-    const labels = []; const series = [];
-    if(range==='today'){
-      for(let h=0;h<24;h++){
-        labels.push(String(h).padStart(2,'0'));
-        series.push(sales.filter(s=>new Date(s.ts).getHours()===h).reduce((a,s)=>a+s.total,0));
-      }
-    } else {
-      const days = range==='week'?7:30;
-      for(let i=days-1;i>=0;i--){
-        const d = new Date(); d.setDate(d.getDate()-i);
-        labels.push(d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}));
-        series.push(state.sales.filter(s=>s.ts.slice(0,10)===d.toISOString().slice(0,10)).reduce((a,s)=>a+s.total,0));
-      }
-    }
+        // series for chart
+        const labels = []; const series = [];
+        if (range === 'today') {
+          for (let h = 0; h < 24; h++) {
+            labels.push(String(h).padStart(2, '0'));
+            series.push(sales.filter(s => new Date(s.ts).getHours() === h).reduce((a, s) => a + s.total, 0));
+          }
+        } else {
+          const days = range === 'week' ? 7 : 30;
+          for (let i = days - 1; i >= 0; i--) {
+            const d = new Date(); d.setDate(d.getDate() - i);
+            labels.push(d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }));
+            series.push(state.sales.filter(s => s.ts.slice(0, 10) === d.toISOString().slice(0, 10)).reduce((a, s) => a + s.total, 0));
+          }
+        }
 
-    $('#rep-body').innerHTML = `
+        $('#rep-body').innerHTML = `
       <div class="grid grid-cols-2 gap-3">
         <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Revenue</div><div class="text-xl font-bold mt-1">${fmtNPR(revenue)}</div><div class="text-[11px] text-stone-500 mt-1">${sales.length} orders</div></div>
-        <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Profit</div><div class="text-xl font-bold mt-1 text-emerald-600">${fmtNPR(profit)}</div><div class="text-[11px] text-stone-500 mt-1">${revenue?Math.round(profit/revenue*100):0}% margin</div></div>
+        <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Profit</div><div class="text-xl font-bold mt-1 text-emerald-600">${fmtNPR(profit)}</div><div class="text-[11px] text-stone-500 mt-1">${revenue ? Math.round(profit / revenue * 100) : 0}% margin</div></div>
         <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">Cash sales</div><div class="text-base font-bold mt-1">${fmtNPR(cashRev)}</div></div>
         <div class="card p-4"><div class="text-[10px] uppercase text-stone-500 font-semibold">QR / Mobile</div><div class="text-base font-bold mt-1">${fmtNPR(qrRev)}</div></div>
       </div>
@@ -1286,12 +1417,12 @@ function renderReports(){
           <div class="font-semibold text-sm">Top sellers</div>
           <div class="text-[11px] text-stone-500">${itemCount} items sold</div>
         </div>
-        ${top.length===0
-          ? `<div class="text-center py-4 text-sm text-stone-500">No sales in this period</div>`
-          : top.map((t,i) => `
+        ${top.length === 0
+            ? `<div class="text-center py-4 text-sm text-stone-500">No sales in this period</div>`
+            : top.map((t, i) => `
             <div class="flex items-center justify-between py-2 border-t border-stone-100 first:border-0">
               <div class="flex items-center gap-3">
-                <div class="w-6 h-6 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center text-xs font-bold">${i+1}</div>
+                <div class="w-6 h-6 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center text-xs font-bold">${i + 1}</div>
                 <div>
                   <div class="text-sm font-medium">${t.name}</div>
                   <div class="text-[11px] text-stone-500">${t.qty} sold</div>
@@ -1305,14 +1436,14 @@ function renderReports(){
         <div class="font-semibold text-sm mb-2">Stock health</div>
         <div class="flex items-center gap-2 text-xs">
           <div class="flex-1 bg-stone-100 rounded-full h-2 overflow-hidden">
-            <div class="h-full bg-emerald-500" style="width:${Math.round((state.products.filter(p=>p.stock>p.lowStock).length/state.products.length)*100)}%"></div>
+            <div class="h-full bg-emerald-500" style="width:${Math.round((state.products.filter(p => p.stock > p.lowStock).length / state.products.length) * 100)}%"></div>
           </div>
-          <span class="font-semibold">${state.products.filter(p=>p.stock>p.lowStock).length}/${state.products.length} OK</span>
+          <span class="font-semibold">${state.products.filter(p => p.stock > p.lowStock).length}/${state.products.length} OK</span>
         </div>
         <div class="grid grid-cols-3 gap-2 mt-3 text-center">
-          <div><div class="text-base font-bold text-emerald-600">${state.products.filter(p=>p.stock>p.lowStock).length}</div><div class="text-[10px] text-stone-500">Healthy</div></div>
-          <div><div class="text-base font-bold text-amber-600">${state.products.filter(p=>p.stock<=p.lowStock&&p.stock>0).length}</div><div class="text-[10px] text-stone-500">Low</div></div>
-          <div><div class="text-base font-bold text-red-600">${state.products.filter(p=>p.stock===0).length}</div><div class="text-[10px] text-stone-500">Out</div></div>
+          <div><div class="text-base font-bold text-emerald-600">${state.products.filter(p => p.stock > p.lowStock).length}</div><div class="text-[10px] text-stone-500">Healthy</div></div>
+          <div><div class="text-base font-bold text-amber-600">${state.products.filter(p => p.stock <= p.lowStock && p.stock > 0).length}</div><div class="text-[10px] text-stone-500">Low</div></div>
+          <div><div class="text-base font-bold text-red-600">${state.products.filter(p => p.stock === 0).length}</div><div class="text-[10px] text-stone-500">Out</div></div>
         </div>
       </div>
 
@@ -1325,17 +1456,17 @@ function renderReports(){
           <span class="badge bg-amber-100 text-amber-800">${lowStock.length}</span>
         </div>
         <div id="low-stock-list" class="hidden">
-        ${lowStock.length===0
-          ? `<div class="text-center py-4 text-sm text-stone-500">All products well stocked ✓</div>`
-          : lowStock.map(p => `
+        ${lowStock.length === 0
+            ? `<div class="text-center py-4 text-sm text-stone-500">All products well stocked ✓</div>`
+            : lowStock.map(p => `
             <button onclick="goto('product/${p.id}')" class="w-full flex items-center justify-between py-2.5 border-t border-stone-100 text-left">
               <div>
                 <div class="text-sm font-medium">${p.name}</div>
                 <div class="text-[11px] text-stone-500">${p.category} • Threshold ${p.lowStock}</div>
               </div>
               <div class="text-right">
-                <div class="text-sm font-bold ${p.stock===0?'text-red-600':'text-amber-600'}">${p.stock} left</div>
-                <div class="text-[11px] text-stone-400">${ICON.arrow.replace('width="16"','width="12"')}</div>
+                <div class="text-sm font-bold ${p.stock === 0 ? 'text-red-600' : 'text-amber-600'}">${p.stock} left</div>
+                <div class="text-[11px] text-stone-400">${ICON.arrow.replace('width="16"', 'width="12"')}</div>
               </div>
             </button>`).join('')}
         </div>
@@ -1344,41 +1475,41 @@ function renderReports(){
       <button onclick="exportCSV()" class="card w-full py-3 font-semibold text-sm mb-4">Export sales as CSV</button>
     `;
 
-    setTimeout(()=>{
-      const ctx = $('#rep-chart').getContext('2d');
-      new Chart(ctx, {
-        type:'line',
-        data:{ labels, datasets:[{ data:series, borderColor:'#7c1d1d', backgroundColor:'rgba(124,29,29,0.08)', fill:true, tension:0.35, pointRadius:2, borderWidth:2 }]},
-        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>'रू '+v},grid:{color:'#f5f5f4'}}, x:{grid:{display:false}}}}
+        setTimeout(() => {
+          const ctx = $('#rep-chart').getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [{ data: series, borderColor: '#7c1d1d', backgroundColor: 'rgba(124,29,29,0.08)', fill: true, tension: 0.35, pointRadius: 2, borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { callback: v => 'रू ' + v }, grid: { color: '#f5f5f4' } }, x: { grid: { display: false } } } }
+          });
+        }, 50);
+      }
+    }
+
+    function exportCSV() {
+      const rows = [['Invoice', 'Date', 'Time', 'Cashier', 'Customer', 'Items', 'Subtotal', 'Discount', 'Tax', 'Total', 'Cost', 'Profit', 'Payment']];
+      state.sales.forEach(s => {
+        rows.push([
+          s.invoice, fmtDate(s.ts), fmtTime(s.ts), s.cashier, s.customer,
+          s.items.map(i => `${i.name}x${i.qty}`).join(' | '),
+          s.subtotal, s.discount, s.tax, s.total, s.cost, s.profit, s.payment
+        ]);
       });
-    }, 50);
-  }
-}
+      const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `sales_${todayISO()}.csv`; a.click();
+      URL.revokeObjectURL(url);
+      toast('CSV exported', 'success');
+    }
 
-function exportCSV(){
-  const rows = [['Invoice','Date','Time','Cashier','Customer','Items','Subtotal','Discount','Tax','Total','Cost','Profit','Payment']];
-  state.sales.forEach(s => {
-    rows.push([
-      s.invoice, fmtDate(s.ts), fmtTime(s.ts), s.cashier, s.customer,
-      s.items.map(i=>`${i.name}x${i.qty}`).join(' | '),
-      s.subtotal, s.discount, s.tax, s.total, s.cost, s.profit, s.payment
-    ]);
-  });
-  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type:'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `sales_${todayISO()}.csv`; a.click();
-  URL.revokeObjectURL(url);
-  toast('CSV exported','success');
-}
-
-/* ====================================================================
-   MORE / DRAWER
-   ==================================================================== */
-function renderMore(){
-  $('#app').innerHTML = `
-  ${shellHeader('More', { sub:`Signed in as ${session.name} (${session.role})` })}
+    /* ====================================================================
+       MORE / DRAWER
+       ==================================================================== */
+    function renderMore() {
+      $('#app').innerHTML = `
+  ${shellHeader('More', { sub: `Signed in as ${session.name} (${session.role})` })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <div class="card p-4 flex items-center gap-3">
       <div class="w-12 h-12 rounded-full brand-grad text-white flex items-center justify-center font-bold text-lg">${session.name[0]}</div>
@@ -1386,17 +1517,17 @@ function renderMore(){
         <div class="font-semibold">${session.name}</div>
         <div class="text-xs text-stone-500">${session.email}</div>
       </div>
-      <span class="badge ${session.role==='owner'?'bg-amber-100 text-amber-800':'bg-stone-100 text-stone-700'}">${session.role.toUpperCase()}</span>
+      <span class="badge ${session.role === 'owner' ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-700'}">${session.role.toUpperCase()}</span>
     </div>
 
     <div class="card divide-y divide-stone-100">
       ${[
-        {label:'Sales history', icon:ICON.history, route:'sales'},
-        {label:'Monthly expenses', icon:ICON.cash, route:'expenses'},
-        {label:'Stock received records', icon:ICON.box, route:'purchases'},
-        {label:'Audit logs', icon:ICON.shield, route:'audit', owner:true},
-        {label:'Settings', icon:ICON.settings, route:'settings', owner:true},
-      ].filter(i => !i.owner || session.role==='owner').map(i => `
+          { label: 'Sales history', icon: ICON.history, route: 'sales' },
+          { label: 'Monthly expenses', icon: ICON.cash, route: 'expenses' },
+          { label: 'Stock received records', icon: ICON.box, route: 'purchases' },
+          { label: 'Audit logs', icon: ICON.shield, route: 'audit', owner: true },
+          { label: 'Settings', icon: ICON.settings, route: 'settings', owner: true },
+        ].filter(i => !i.owner || session.role === 'owner').map(i => `
         <button onclick="goto('${i.route}')" class="w-full flex items-center gap-3 p-4 text-left">
           <span class="text-stone-600">${i.icon}</span>
           <span class="flex-1 text-sm font-medium">${i.label}</span>
@@ -1420,30 +1551,30 @@ function renderMore(){
     </div>
   </div>
   ${bottomNav()}`;
-}
-function logout(){
-  audit('logout', `${session.name} signed out`);
-  setSession(null);
-  setCart([]);
-  toast('Signed out','info');
-  goto('login');
-}
+    }
+    function logout() {
+      audit('logout', `${session.name} signed out`);
+      setSession(null);
+      setCart([]);
+      toast('Signed out', 'info');
+      goto('login');
+    }
 
-/* ====================================================================
-   SALES HISTORY
-   ==================================================================== */
-function renderSalesHistory(){
-  const groups = {};
-  [...state.sales].reverse().forEach(s => {
-    const k = fmtDate(s.ts);
-    (groups[k] = groups[k]||[]).push(s);
-  });
-  $('#app').innerHTML = `
-  ${shellHeader('Sales History', { back:true, sub:`${state.sales.length} total transactions` })}
+    /* ====================================================================
+       SALES HISTORY
+       ==================================================================== */
+    function renderSalesHistory() {
+      const groups = {};
+      [...state.sales].reverse().forEach(s => {
+        const k = fmtDate(s.ts);
+        (groups[k] = groups[k] || []).push(s);
+      });
+      $('#app').innerHTML = `
+  ${shellHeader('Sales History', { back: true, sub: `${state.sales.length} total transactions` })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     ${Object.entries(groups).map(([day, list]) => {
-      const total = list.reduce((a,s)=>a+s.total,0);
-      return `
+        const total = list.reduce((a, s) => a + s.total, 0);
+        return `
         <div>
           <div class="flex items-center justify-between px-1 mb-1.5">
             <div class="text-xs font-semibold text-stone-600">${day}</div>
@@ -1452,8 +1583,8 @@ function renderSalesHistory(){
           <div class="card divide-y divide-stone-100">
             ${list.map(s => `
               <button onclick="goto('receipt/${s.id}')" class="w-full p-3 flex items-center gap-3 text-left">
-                <div class="w-9 h-9 rounded-full ${s.payment==='cash'?'bg-emerald-50 text-emerald-700':'bg-indigo-50 text-indigo-700'} flex items-center justify-center">
-                  ${s.payment==='cash'?ICON.cash:ICON.qr}
+                <div class="w-9 h-9 rounded-full ${s.payment === 'cash' ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700'} flex items-center justify-center">
+                  ${s.payment === 'cash' ? ICON.cash : ICON.qr}
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="text-sm font-semibold">${s.invoice}</div>
@@ -1466,27 +1597,27 @@ function renderSalesHistory(){
               </button>`).join('')}
           </div>
         </div>`;
-    }).join('')}
+      }).join('')}
   </div>`;
-}
+    }
 
-/* ====================================================================
-   PURCHASES
-   ==================================================================== */
-function renderPurchases(){
-  $('#app').innerHTML = `
-  ${shellHeader('Purchase Entry', { back:true, sub:'Receive new stock from supplier' })}
+    /* ====================================================================
+       PURCHASES
+       ==================================================================== */
+    function renderPurchases() {
+      $('#app').innerHTML = `
+  ${shellHeader('Purchase Entry', { back: true, sub: 'Receive new stock from supplier' })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <button onclick="goto('purchase-new')" class="w-full brand-grad text-white py-3.5 rounded-2xl font-bold shadow-md flex items-center justify-center gap-2">
       ${ICON.plus}<span>Record new purchase</span>
     </button>
 
-    ${state.purchases.length===0
-      ? `<div class="card p-8 text-center text-sm text-stone-500">
+    ${state.purchases.length === 0
+          ? `<div class="card p-8 text-center text-sm text-stone-500">
           <div class="w-12 h-12 mx-auto rounded-full bg-stone-100 text-stone-500 flex items-center justify-center mb-3">${ICON.truck}</div>
           No purchases recorded yet.<br/>Start by adding stock from your supplier.
          </div>`
-      : `<div class="card divide-y divide-stone-100">
+          : `<div class="card divide-y divide-stone-100">
           ${[...state.purchases].reverse().map(p => `
             <div class="p-4">
               <div class="flex items-center justify-between">
@@ -1496,16 +1627,16 @@ function renderPurchases(){
                 </div>
                 <div class="text-sm font-bold">${fmtNPR(p.total)}</div>
               </div>
-              <div class="text-[11px] text-stone-600 mt-1.5">${p.items.map(i=>`${i.name} x${i.qty}`).join(', ')}</div>
+              <div class="text-[11px] text-stone-600 mt-1.5">${p.items.map(i => `${i.name} x${i.qty}`).join(', ')}</div>
             </div>`).join('')}
         </div>`}
   </div>`;
-}
+    }
 
-function renderPurchaseForm(){
-  let lines = [];
-  $('#app').innerHTML = `
-  ${shellHeader('New Purchase', { back:true })}
+    function renderPurchaseForm() {
+      let lines = [];
+      $('#app').innerHTML = `
+  ${shellHeader('New Purchase', { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <div class="card p-4 space-y-3">
       <div>
@@ -1538,46 +1669,46 @@ function renderPurchaseForm(){
     </button>
   </div>`;
 
-  window.addPuLine = () => {
-    lines.push({ productId:'', qty:1, cost:0 });
-    redrawLines();
-  };
-  window.removePuLine = (i) => { lines.splice(i,1); redrawLines(); };
-  window.savePurchase = () => {
-    const supplier = $('#pu-supplier').value.trim();
-    const bill = $('#pu-bill').value.trim();
-    if(!supplier){ toast('Supplier required','error'); return; }
-    if(lines.length===0){ toast('Add at least 1 item','error'); return; }
-    const items = lines.map(l => {
-      const p = state.products.find(p=>p.id===l.productId);
-      return { productId:l.productId, name:p?.name||'?', qty:Number(l.qty)||0, cost:Number(l.cost)||0 };
-    }).filter(i => i.productId && i.qty>0);
-    if(items.length===0){ toast('Invalid lines','error'); return; }
-    const total = items.reduce((a,i)=>a+i.cost*i.qty,0);
-    const purchase = { id:uid('pu'), supplier, bill, items, total, ts:nowISO(), user:session.name };
-    state.purchases.push(purchase);
-    items.forEach(i => {
-      const p = state.products.find(p=>p.id===i.productId);
-      if(p){
-        p.stock += i.qty;
-        if(i.cost>0) p.cost = i.cost; // update latest cost
-      }
-    });
-    audit('purchase_create', `${supplier} • ${items.length} items • ${fmtNPR(total)}`);
-    Store.save();
-    toast('Stock received','success');
-    goto('purchases');
-  };
+      window.addPuLine = () => {
+        lines.push({ productId: '', qty: 1, cost: 0 });
+        redrawLines();
+      };
+      window.removePuLine = (i) => { lines.splice(i, 1); redrawLines(); };
+      window.savePurchase = () => {
+        const supplier = $('#pu-supplier').value.trim();
+        const bill = $('#pu-bill').value.trim();
+        if (!supplier) { toast('Supplier required', 'error'); return; }
+        if (lines.length === 0) { toast('Add at least 1 item', 'error'); return; }
+        const items = lines.map(l => {
+          const p = state.products.find(p => p.id === l.productId);
+          return { productId: l.productId, name: p?.name || '?', qty: Number(l.qty) || 0, cost: Number(l.cost) || 0 };
+        }).filter(i => i.productId && i.qty > 0);
+        if (items.length === 0) { toast('Invalid lines', 'error'); return; }
+        const total = items.reduce((a, i) => a + i.cost * i.qty, 0);
+        const purchase = { id: uid('pu'), supplier, bill, items, total, ts: nowISO(), user: session.name };
+        state.purchases.push(purchase);
+        items.forEach(i => {
+          const p = state.products.find(p => p.id === i.productId);
+          if (p) {
+            p.stock += i.qty;
+            if (i.cost > 0) p.cost = i.cost; // update latest cost
+          }
+        });
+        audit('purchase_create', `${supplier} • ${items.length} items • ${fmtNPR(total)}`);
+        Store.save();
+        toast('Stock received', 'success');
+        goto('purchases');
+      };
 
-  function redrawLines(){
-    const container = $('#pu-lines');
-    $('#pu-empty').style.display = lines.length===0 ? 'block' : 'none';
-    container.innerHTML = lines.map((l,i) => `
+      function redrawLines() {
+        const container = $('#pu-lines');
+        $('#pu-empty').style.display = lines.length === 0 ? 'block' : 'none';
+        container.innerHTML = lines.map((l, i) => `
       <div class="border border-stone-200 rounded-xl p-2.5">
         <div class="flex gap-2 items-center mb-2">
           <select onchange="updateLine(${i},'productId',this.value)" class="flex-1 border border-stone-200 rounded-lg px-2 py-2 text-sm bg-white">
             <option value="">Choose product</option>
-            ${state.products.map(p => `<option value="${p.id}" ${l.productId===p.id?'selected':''}>${p.name}</option>`).join('')}
+            ${state.products.map(p => `<option value="${p.id}" ${l.productId === p.id ? 'selected' : ''}>${p.name}</option>`).join('')}
           </select>
           <button onclick="removePuLine(${i})" class="text-red-500 p-1">${ICON.trash}</button>
         </div>
@@ -1591,54 +1722,54 @@ function renderPurchaseForm(){
             <input type="number" inputmode="decimal" value="${l.cost}" oninput="updateLine(${i},'cost',this.value)" class="w-full border border-stone-200 rounded-lg px-2 py-2 text-sm" placeholder="NPR" />
           </div>
         </div>
-        <div class="text-[11px] text-stone-500 text-right mt-1.5">Subtotal: <strong>${fmtNPR((Number(l.qty)||0)*(Number(l.cost)||0))}</strong></div>
+        <div class="text-[11px] text-stone-500 text-right mt-1.5">Subtotal: <strong>${fmtNPR((Number(l.qty) || 0) * (Number(l.cost) || 0))}</strong></div>
       </div>
     `).join('');
-    const total = lines.reduce((a,l)=>a+(Number(l.qty)||0)*(Number(l.cost)||0),0);
-    $('#pu-total').textContent = fmtNPR(total);
-  }
-  window.updateLine = (i, field, val) => {
-    lines[i][field] = field==='productId' ? val : Number(val);
-    if(field==='productId'){
-      const p = state.products.find(p=>p.id===val);
-      if(p && !lines[i].cost) lines[i].cost = p.cost;
+        const total = lines.reduce((a, l) => a + (Number(l.qty) || 0) * (Number(l.cost) || 0), 0);
+        $('#pu-total').textContent = fmtNPR(total);
+      }
+      window.updateLine = (i, field, val) => {
+        lines[i][field] = field === 'productId' ? val : Number(val);
+        if (field === 'productId') {
+          const p = state.products.find(p => p.id === val);
+          if (p && !lines[i].cost) lines[i].cost = p.cost;
+        }
+        redrawLines();
+      };
     }
-    redrawLines();
-  };
-}
 
 
-/* ====================================================================
-   MONTHLY EXPENSES
-   ==================================================================== */
-function renderExpenses(){
-  $('#app').innerHTML = `
-  ${shellHeader('Monthly Expenses', { back:true, sub:'Record overheads, rent, equipment, etc.' })}
+    /* ====================================================================
+       MONTHLY EXPENSES
+       ==================================================================== */
+    function renderExpenses() {
+      $('#app').innerHTML = `
+  ${shellHeader('Monthly Expenses', { back: true, sub: 'Record overheads, rent, equipment, etc.' })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <button onclick="goto('expense-new')" class="w-full brand-grad text-white py-3.5 rounded-2xl font-bold shadow-md flex items-center justify-center gap-2">
       ${ICON.plus}<span>Add Expense</span>
     </button>
-    ${state.expenses.length===0
-      ? `<div class="card p-8 text-center text-sm text-stone-500">
+    ${state.expenses.length === 0
+          ? `<div class="card p-8 text-center text-sm text-stone-500">
           <div class="w-12 h-12 mx-auto rounded-full bg-stone-100 text-stone-500 flex items-center justify-center mb-3">${ICON.cash}</div>
           No expenses recorded yet.
          </div>`
-      : `<div class="card divide-y divide-stone-100">
+          : `<div class="card divide-y divide-stone-100">
           ${[...state.expenses].reverse().map(e => `
             <div class="p-4 flex items-center justify-between">
               <div>
                 <div class="font-semibold text-sm">${e.category}</div>
-                <div class="text-[11px] text-stone-500">${fmtDate(e.ts)} ${fmtTime(e.ts)} • ${e.note||''}</div>
+                <div class="text-[11px] text-stone-500">${fmtDate(e.ts)} ${fmtTime(e.ts)} • ${e.note || ''}</div>
               </div>
               <div class="text-sm font-bold text-red-600">-${fmtNPR(e.amount)}</div>
             </div>`).join('')}
         </div>`}
   </div>`;
-}
+    }
 
-function renderExpenseForm(){
-  $('#app').innerHTML = `
-  ${shellHeader('New Expense', { back:true })}
+    function renderExpenseForm() {
+      $('#app').innerHTML = `
+  ${shellHeader('New Expense', { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
     <div class="card p-4 space-y-3">
       <div>
@@ -1659,27 +1790,27 @@ function renderExpenseForm(){
     </button>
   </div>`;
 
-  window.saveExpense = () => {
-    const category = $('#ex-cat').value.trim();
-    const amount = Number($('#ex-amount').value)||0;
-    const note = $('#ex-note').value.trim();
-    if(!category){ toast('Category required','error'); return; }
-    if(amount<=0){ toast('Valid amount required','error'); return; }
-    const expense = { id:uid('ex'), category, amount, note, ts:nowISO(), user:session.name };
-    state.expenses.push(expense);
-    audit('expense_create', `${category} • ${fmtNPR(amount)}`);
-    Store.save();
-    toast('Expense recorded','success');
-    goto('expenses');
-  };
-}
+      window.saveExpense = () => {
+        const category = $('#ex-cat').value.trim();
+        const amount = Number($('#ex-amount').value) || 0;
+        const note = $('#ex-note').value.trim();
+        if (!category) { toast('Category required', 'error'); return; }
+        if (amount <= 0) { toast('Valid amount required', 'error'); return; }
+        const expense = { id: uid('ex'), category, amount, note, ts: nowISO(), user: session.name };
+        state.expenses.push(expense);
+        audit('expense_create', `${category} • ${fmtNPR(amount)}`);
+        Store.save();
+        toast('Expense recorded', 'success');
+        goto('expenses');
+      };
+    }
 
-/* ====================================================================
-   ADD STOCK (INTERACTIVE)
-   ==================================================================== */
-function renderStockAdd(){
-  $('#app').innerHTML = `
-  ${shellHeader('Add Stock', { back:true, sub:'Scan barcode to update inventory' })}
+    /* ====================================================================
+       ADD STOCK (INTERACTIVE)
+       ==================================================================== */
+    function renderStockAdd() {
+      $('#app').innerHTML = `
+  ${shellHeader('Add Stock', { back: true, sub: 'Scan barcode to update inventory' })}
   <div class="px-4 -mt-2 pb-6 space-y-3 text-center">
     <div class="card p-8">
       <div class="w-20 h-20 mx-auto rounded-full brand-grad text-white flex items-center justify-center mb-4 text-4xl shadow-lg">
@@ -1706,33 +1837,33 @@ function renderStockAdd(){
   </div>
   ${bottomNav()}`;
 
-  setTimeout(()=>{
-    const inp = $('#sa-manual-bc');
-    if(inp){ inp.focus(); inp.addEventListener('keydown',e=>{ if(e.key==='Enter') stockManualEntry(); }); }
-  }, 100);
+      setTimeout(() => {
+        const inp = $('#sa-manual-bc');
+        if (inp) { inp.focus(); inp.addEventListener('keydown', e => { if (e.key === 'Enter') stockManualEntry(); }); }
+      }, 100);
 
-  window.stockManualEntry = () => {
-    const v = ($('#sa-manual-bc')||{}).value?.trim();
-    if(v) processStockScanned(v);
-  };
-}
+      window.stockManualEntry = () => {
+        const v = ($('#sa-manual-bc') || {}).value?.trim();
+        if (v) processStockScanned(v);
+      };
+    }
 
-function openStockScanner(){
-  openScanner('products'); // use generic scanner UI overlay
-  // Temporary override
-  const orig = window.handleScanned;
-  window.handleScanned = (code) => {
-    closeScanner();
-    window.handleScanned = orig;
-    processStockScanned(code);
-  };
-}
+    function openStockScanner() {
+      openScanner('products'); // use generic scanner UI overlay
+      // Temporary override
+      const orig = window.handleScanned;
+      window.handleScanned = (code) => {
+        closeScanner();
+        window.handleScanned = orig;
+        processStockScanned(code);
+      };
+    }
 
-function processStockScanned(code){
-  const p = state.products.find(p => p.barcode === code);
-  if(p){
-    // Exists: Prompt for adding stock
-    $('#modal-root').innerHTML = `
+    function processStockScanned(code) {
+      const p = state.products.find(p => p.barcode === code);
+      if (p) {
+        // Exists: Prompt for adding stock
+        $('#modal-root').innerHTML = `
     <div class="modal-bd fixed inset-0 bg-black/60 z-50 flex items-end justify-center">
       <div class="sheet bg-white w-full max-w-[480px] rounded-t-3xl p-6">
         <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-4"></div>
@@ -1759,84 +1890,84 @@ function processStockScanned(code){
         </div>
       </div>
     </div>`;
-    setTimeout(()=>{ $('#sa-qty').focus(); }, 300);
-  } else {
-    // Doesn't exist
-    showProductNotFound(code);
-  }
-}
+        setTimeout(() => { $('#sa-qty').focus(); }, 300);
+      } else {
+        // Doesn't exist
+        showProductNotFound(code);
+      }
+    }
 
-function confirmStockAdd(pid){
-  const qty = Number($('#sa-qty').value)||0;
-  const cost = Number($('#sa-cost').value)||0;
-  if(qty <= 0) { toast('Enter a valid quantity', 'error'); return; }
-  const p = state.products.find(x=>x.id===pid);
-  if(p){
-    p.stock += qty;
-    if(cost > 0) p.cost = cost;
-    
-    // Create stock received record (Purchase)
-    const purchase = { 
-      id:uid('pu'), 
-      supplier: 'Direct Add', 
-      bill: '-', 
-      items: [{ productId:p.id, name:p.name, qty, cost: cost || p.cost }], 
-      total: qty * (cost || p.cost), 
-      ts:nowISO(), 
-      user:session.name 
-    };
-    state.purchases.push(purchase);
+    function confirmStockAdd(pid) {
+      const qty = Number($('#sa-qty').value) || 0;
+      const cost = Number($('#sa-cost').value) || 0;
+      if (qty <= 0) { toast('Enter a valid quantity', 'error'); return; }
+      const p = state.products.find(x => x.id === pid);
+      if (p) {
+        p.stock += qty;
+        if (cost > 0) p.cost = cost;
 
-    audit('purchase_create', `Direct Add: ${p.name} (+${qty})`);
-    Store.save();
-    toast(`Added ${qty} to ${p.name}`, 'success');
-  }
-  $('#modal-root').innerHTML='';
-}
+        // Create stock received record (Purchase)
+        const purchase = {
+          id: uid('pu'),
+          supplier: 'Direct Add',
+          bill: '-',
+          items: [{ productId: p.id, name: p.name, qty, cost: cost || p.cost }],
+          total: qty * (cost || p.cost),
+          ts: nowISO(),
+          user: session.name
+        };
+        state.purchases.push(purchase);
+
+        audit('purchase_create', `Direct Add: ${p.name} (+${qty})`);
+        Store.save();
+        toast(`Added ${qty} to ${p.name}`, 'success');
+      }
+      $('#modal-root').innerHTML = '';
+    }
 
 
-/* ====================================================================
-   AUDIT LOGS
-   ==================================================================== */
-function renderAudit(){
-  const list = state.audit;
-  const actionLabel = {
-    sale_create:'Sale completed', product_create:'Product added',
-    product_update:'Product updated', product_delete:'Product deleted',
-    purchase_create:'Stock received', login:'User signed in',
-    logout:'User signed out', seed:'Demo data seeded',
-    settings_update:'Settings updated'
-  };
-  $('#app').innerHTML = `
-  ${shellHeader('Audit Logs', { back:true, sub:`${list.length} events recorded` })}
+    /* ====================================================================
+       AUDIT LOGS
+       ==================================================================== */
+    function renderAudit() {
+      const list = state.audit;
+      const actionLabel = {
+        sale_create: 'Sale completed', product_create: 'Product added',
+        product_update: 'Product updated', product_delete: 'Product deleted',
+        purchase_create: 'Stock received', login: 'User signed in',
+        logout: 'User signed out', seed: 'Demo data seeded',
+        settings_update: 'Settings updated'
+      };
+      $('#app').innerHTML = `
+  ${shellHeader('Audit Logs', { back: true, sub: `${list.length} events recorded` })}
   <div class="px-4 -mt-2 pb-6">
-    ${list.length===0 ? `<div class="text-center py-16 text-stone-500 text-sm">No audit events yet</div>` : `
+    ${list.length === 0 ? `<div class="text-center py-16 text-stone-500 text-sm">No audit events yet</div>` : `
     <div class="card divide-y divide-stone-100">
       ${list.map(a => {
-        const ico = ({sale_create:ICON.cart,product_create:ICON.plus,product_update:ICON.edit,product_delete:ICON.trash,purchase_create:ICON.truck,login:ICON.user,logout:ICON.logout,seed:ICON.shield,settings_update:ICON.settings}[a.action]||ICON.history);
+        const ico = ({ sale_create: ICON.cart, product_create: ICON.plus, product_update: ICON.edit, product_delete: ICON.trash, purchase_create: ICON.truck, login: ICON.user, logout: ICON.logout, seed: ICON.shield, settings_update: ICON.settings }[a.action] || ICON.history);
         return `
         <div class="flex items-start gap-3 p-3.5">
           <div class="w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center flex-shrink-0 mt-0.5">${ico}</div>
           <div class="flex-1 min-w-0">
-            <div class="text-sm font-semibold">${actionLabel[a.action]||a.action}</div>
-            <div class="text-xs text-stone-500 truncate">${a.detail||''}</div>
+            <div class="text-sm font-semibold">${actionLabel[a.action] || a.action}</div>
+            <div class="text-xs text-stone-500 truncate">${a.detail || ''}</div>
             <div class="text-[11px] text-stone-400 mt-0.5">${a.user} • ${fmtDate(a.ts)} ${fmtTime(a.ts)}</div>
           </div>
-          <span class="badge ${a.role==='owner'?'bg-amber-100 text-amber-700':'bg-stone-100 text-stone-600'} flex-shrink-0">${a.role}</span>
+          <span class="badge ${a.role === 'owner' ? 'bg-amber-100 text-amber-700' : 'bg-stone-100 text-stone-600'} flex-shrink-0">${a.role}</span>
         </div>`;
       }).join('')}
     </div>`}
   </div>`;
-}
+    }
 
-/* ====================================================================
-   SETTINGS
-   ==================================================================== */
-function renderSettings(){
-  const s = state.shop;
-  const cfg = state.settings;
-  $('#app').innerHTML = `
-  ${shellHeader('Settings', { back:true })}
+    /* ====================================================================
+       SETTINGS
+       ==================================================================== */
+    function renderSettings() {
+      const s = state.shop;
+      const cfg = state.settings;
+      $('#app').innerHTML = `
+  ${shellHeader('Settings', { back: true })}
   <div class="px-4 -mt-2 pb-6 space-y-3">
 
     <div class="card p-4 space-y-3">
@@ -1885,35 +2016,36 @@ function renderSettings(){
       <div class="text-[11px] text-stone-500 mt-2">This clears all sales, purchases, audit logs and re-seeds with demo products.</div>
     </div>
   </div>`;
-}
+    }
 
-function saveSettings(){
-  state.shop.name    = $('#se-name').value.trim();
-  state.shop.address = $('#se-addr').value.trim();
-  state.shop.phone   = $('#se-phone').value.trim();
-  state.shop.vat     = $('#se-vat').value.trim();
-  state.settings.taxRate           = Number($('#se-tax').value)||0;
-  state.settings.qrPaymentLabel    = $('#se-qr').value.trim();
-  state.settings.lowStockThreshold = Number($('#se-low').value)||5;
-  audit('settings_update','Shop settings updated');
-  Store.save();
-  toast('Settings saved','success');
-  goto('more');
-}
+    function saveSettings() {
+      state.shop.name = $('#se-name').value.trim();
+      state.shop.address = $('#se-addr').value.trim();
+      state.shop.phone = $('#se-phone').value.trim();
+      state.shop.vat = $('#se-vat').value.trim();
+      state.settings.taxRate = Number($('#se-tax').value) || 0;
+      state.settings.qrPaymentLabel = $('#se-qr').value.trim();
+      state.settings.lowStockThreshold = Number($('#se-low').value) || 5;
+      audit('settings_update', 'Shop settings updated');
+      Store.save();
+      toast('Settings saved', 'success');
+      goto('more');
+    }
 
-function resetDemo(){
-  if(!confirm('Reset all data? This cannot be undone.')) return;
-  Store.reset();
-  state = Store.load();
-  setCart([]);
-  toast('Demo reset','info');
-  goto('home');
-}
+    function resetDemo() {
+      if (!confirm('Reset all data? This cannot be undone.')) return;
+      Store.reset();
+      state = Store.load();
+      setCart([]);
+      toast('Demo reset', 'info');
+      goto('home');
+    }
 
-/* ====================================================================
-   BOOT
-   ==================================================================== */
-document.addEventListener('DOMContentLoaded', () => { render(); });
-</script>
+    /* ====================================================================
+       BOOT
+       ==================================================================== */
+    document.addEventListener('DOMContentLoaded', () => { render(); });
+  </script>
 </body>
+
 </html>
