@@ -242,7 +242,7 @@
     const DEFAULTS = {
       shop: { name: 'Vajrapani Liquore Trade', address: 'Bahundhara, Kathmandu', phone: '+977-9841-XXXXXX', vat: '601234567', currency: 'NPR' },
       users: [
-        { id: 'u_owner', email: 'owner@wineshop.com', pin: '1234', name: 'Sherpa Sir', role: 'owner' },
+        { id: 'u_owner', email: 'owner@wineshop.com', pin: '1234', name: 'Shashi Sherpa', role: 'owner' },
         { id: 'u_cashier', email: 'cashier@wineshop.com', pin: '0000', name: 'Cashier', role: 'cashier' }
       ],
       products: [],
@@ -297,7 +297,7 @@
             items, subtotal, discount: 0, tax: 0, total: subtotal,
             cost, profit: subtotal - cost,
             payment: Math.random() > 0.5 ? 'cash' : 'qr',
-            cashier: 'Sherpa Sir',
+            cashier: 'Shashi Sherpa',
             customer: 'Walk-in',
             ts
           });
@@ -339,14 +339,14 @@
       if (oldNames.includes(state.shop.name)) { state.shop.name = 'Vajrapani Liquore Trade'; dirty = true; }
       if (state.shop.address === 'Boudha, Kathmandu') { state.shop.address = 'Bahundhara, Kathmandu'; dirty = true; }
       const owner = state.users && state.users.find(u => u.role === 'owner');
-      if (owner && owner.name === 'Dipen Sherpa') { owner.name = 'Sherpa Sir'; dirty = true; }
+      if (owner && (owner.name === 'Dipen Sherpa' || owner.name === 'Sherpa Sir')) { owner.name = 'Shashi Sherpa'; dirty = true; }
       if (dirty) Store.save(state);
     })();
     /* ----------------------------------------------------------------------- */
 
     let session = JSON.parse(sessionStorage.getItem('ws_session') || 'null');
     /* Patch cached session name if still showing old value */
-    if (session && session.name === 'Dipen Sherpa') { session.name = 'Sherpa Sir'; sessionStorage.setItem('ws_session', JSON.stringify(session)); }
+    if (session && (session.name === 'Dipen Sherpa' || session.name === 'Sherpa Sir')) { session.name = 'Shashi Sherpa'; sessionStorage.setItem('ws_session', JSON.stringify(session)); }
     let route = location.hash.replace('#', '') || (session ? 'home' : 'login');
     let cart = JSON.parse(sessionStorage.getItem('ws_cart') || '[]');
     let scanner = null;
