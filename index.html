@@ -593,7 +593,7 @@
       <div class="grid grid-cols-3 gap-3">
         <button onclick="goto('pos')" class="card p-4 text-center active:scale-95 transition-transform">
           <div class="w-13 h-13 mx-auto rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600" style="width:52px;height:52px">${ICON.cart}</div>
-          <div class="mt-2.5 font-semibold text-sm text-stone-700">Sales</div>
+          <div class="mt-2.5 font-semibold text-sm text-stone-700">Sell</div>
         </button>
         <button onclick="goto('stock-add')" class="card p-4 text-center active:scale-95 transition-transform">
           <div class="mx-auto rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600" style="width:52px;height:52px">${ICON.plus}</div>
@@ -941,7 +941,11 @@
 
     <div class="card p-4">
       <div class="text-xs font-semibold text-stone-500 mb-2">CUSTOMER</div>
-      <input id="ck-customer" placeholder="Walk-in customer (optional)" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm ring-brand" />
+      <select id="ck-customer" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm ring-brand bg-white">
+        <option value="Walk in customer">Walk in customer</option>
+        <option value="Regular">Regular</option>
+        <option value="Relative">Relative</option>
+      </select>
       <div class="text-xs font-semibold text-stone-500 mt-3 mb-2">DISCOUNT (NPR)</div>
       <input id="ck-discount" type="number" inputmode="numeric" value="${discount || ''}" placeholder="0" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm ring-brand" oninput="setDiscount(this.value)" />
     </div>
@@ -1416,8 +1420,8 @@
   ${shellHeader('Reports', { sub: 'Sales, profit, stock & top sellers' })}
   <div class="px-4 -mt-2">
     <div class="card p-1 flex gap-1" id="rng-tabs">
-      ${['today', 'week', 'month'].map(r => `
-        <button data-rng="${r}" class="rng-tab flex-1 py-2 rounded-lg text-xs font-semibold ${range === r ? 'bg-stone-900 text-white' : 'text-stone-600'}">${r === 'today' ? 'Today' : r === 'week' ? '7 Days' : '30 Days'}</button>
+      ${['today', 'yesterday', 'week', 'month'].map(r => `
+        <button data-rng="${r}" class="rng-tab flex-1 py-2 rounded-lg text-xs font-semibold ${range === r ? 'bg-stone-900 text-white' : 'text-stone-600'}">${r === 'today' ? 'Today' : r === 'yesterday' ? 'Yesterday' : r === 'week' ? '7 Days' : '30 Days'}</button>
       `).join('')}
     </div>
   </div>
@@ -1434,11 +1438,18 @@
 
       function drawReport() {
         const now = Date.now();
-        const cutoff = range === 'today' ? new Date().setHours(0, 0, 0, 0)
-          : range === 'week' ? now - 7 * 86400000
-            : now - 30 * 86400000;
-        const sales = state.sales.filter(s => new Date(s.ts).getTime() >= cutoff);
-        const expenses = state.expenses.filter(e => new Date(e.ts).getTime() >= cutoff);
+        const yDayStr = new Date(now - 86400000).toISOString().slice(0, 10);
+        let sales, expenses;
+        if (range === 'yesterday') {
+          sales = state.sales.filter(s => s.ts.slice(0, 10) === yDayStr);
+          expenses = state.expenses.filter(e => e.ts.slice(0, 10) === yDayStr);
+        } else {
+          const cutoff = range === 'today' ? new Date().setHours(0, 0, 0, 0)
+            : range === 'week' ? now - 7 * 86400000
+              : now - 30 * 86400000;
+          sales = state.sales.filter(s => new Date(s.ts).getTime() >= cutoff);
+          expenses = state.expenses.filter(e => new Date(e.ts).getTime() >= cutoff);
+        }
         const expTotal = expenses.reduce((a, e) => a + e.amount, 0);
         const revenue = sales.reduce((a, s) => a + s.total, 0);
         const profit = sales.reduce((a, s) => a + s.profit, 0) - expTotal;
@@ -1458,7 +1469,7 @@
 
         // series for chart
         const labels = []; const series = [];
-        if (range === 'today') {
+        if (range === 'today' || range === 'yesterday') {
           for (let h = 0; h < 24; h++) {
             labels.push(String(h).padStart(2, '0'));
             series.push(sales.filter(s => new Date(s.ts).getHours() === h).reduce((a, s) => a + s.total, 0));
