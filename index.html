@@ -344,6 +344,44 @@
     })();
     /* ----------------------------------------------------------------------- */
 
+    /* ---------- MULTI-BARCODE: helpers + one-time migration ------------------
+       Each product can now have several barcodes (primary + alternates).
+       p.barcode  = primary barcode (kept for display + backward compatibility)
+       p.barcodes = array of ALL barcodes (including the primary)
+       Lookups should ALWAYS go through findProductByBarcode().
+       --------------------------------------------------------------------- */
+    function getAllBarcodes(p) {
+      if (!p) return [];
+      const list = Array.isArray(p.barcodes) ? p.barcodes.slice() : [];
+      if (p.barcode && !list.includes(p.barcode)) list.unshift(p.barcode);
+      return list.map(b => String(b || '').trim()).filter(Boolean);
+    }
+    function findProductByBarcode(code) {
+      const c = String(code || '').trim();
+      if (!c) return null;
+      return state.products.find(p => getAllBarcodes(p).includes(c)) || null;
+    }
+    function addBarcodeToProduct(p, code) {
+      const c = String(code || '').trim();
+      if (!c || !p) return false;
+      if (getAllBarcodes(p).includes(c)) return false;
+      if (!Array.isArray(p.barcodes)) p.barcodes = p.barcode ? [p.barcode] : [];
+      p.barcodes.push(c);
+      if (!p.barcode) p.barcode = c;
+      return true;
+    }
+    (function migrateBarcodes() {
+      let dirty = false;
+      state.products.forEach(p => {
+        if (!Array.isArray(p.barcodes)) {
+          p.barcodes = p.barcode ? [p.barcode] : [];
+          dirty = true;
+        }
+      });
+      if (dirty) Store.save(state);
+    })();
+    /* ----------------------------------------------------------------------- */
+
     let session = JSON.parse(sessionStorage.getItem('ws_session') || 'null');
     /* Patch cached session name if still showing old value */
     if (session && (session.name === 'Dipen Sherpa' || session.name === 'Sherpa Sir')) { session.name = 'Shashi Sherpa'; sessionStorage.setItem('ws_session', JSON.stringify(session)); }
@@ -418,6 +456,7 @@
         case 'expenses': return renderExpenses();
         case 'expense-new': return renderExpenseForm();
         case 'stock-add': return renderStockAdd();
+        case 'stock-existing': return renderStockExisting();
         case 'purchases': return renderPurchases();
         case 'purchase-new': return renderPurchaseForm();
         case 'audit': return renderAudit();
@@ -693,7 +732,7 @@
         const q = $('#pos-search').value.trim().toLowerCase();
         const list = state.products.filter(p => {
           const okCat = activeCat === 'All' || p.category === activeCat;
-          const okQ = !q || p.name.toLowerCase().includes(q) || p.barcode.includes(q) || p.brand.toLowerCase().includes(q);
+          const okQ = !q || p.name.toLowerCase().includes(q) || getAllBarcodes(p).some(b => b.includes(q)) || (p.brand || '').toLowerCase().includes(q);
           return okCat && okQ;
         });
         $('#pos-grid').innerHTML = list.length === 0
@@ -716,7 +755,7 @@
       $('#pos-search').addEventListener('keydown', e => {
         if (e.key === 'Enter') {
           const v = e.target.value.trim();
-          const p = state.products.find(p => p.barcode === v);
+          const p = findProductByBarcode(v);
           if (p) { addToCart(p.id); e.target.value = ''; renderGrid(); }
         }
       });
@@ -839,7 +878,7 @@
     function posManualEntry() {
       const v = ($('#pos-manual-bc') || {}).value?.trim();
       if (!v) return;
-      const p = state.products.find(p => p.barcode === v);
+      const p = findProductByBarcode(v);
       $('#modal-root').innerHTML = '';
       if (p) { addToCart(p.id); toast(`${p.name} added to cart`, 'success'); }
       else { showProductNotFound(v); }
@@ -881,7 +920,7 @@
       if (v) handleScanned(v);
     }
     function handleScanned(code) {
-      const p = state.products.find(p => p.barcode === code);
+      const p = findProductByBarcode(code);
       closeScanner();
       if (scannerCtx === 'products') {
         if (p) { goto('product-' + p.id); }
@@ -897,22 +936,10 @@
       $('#modal-root').innerHTML = '';
     }
     function showProductNotFound(code) {
-      $('#modal-root').innerHTML = `
-  <div class="modal-bd fixed inset-0 bg-black/50 z-50 flex items-end justify-center">
-    <div class="sheet bg-white w-full max-w-[480px] rounded-t-2xl p-5">
-      <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-4"></div>
-      <div class="text-center">
-        <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">${ICON.alert}</div>
-        <div class="font-bold text-lg mt-3">Product not found</div>
-        <div class="text-sm text-stone-500 mt-1">Barcode: <span class="font-mono">${code}</span></div>
-        <div class="text-xs text-stone-500 mt-3">Would you like to create a new product with this barcode?</div>
-        <div class="flex gap-2 mt-5">
-          <button onclick="$('#modal-root').innerHTML=''" class="flex-1 py-3 rounded-xl border border-stone-200 font-semibold">Cancel</button>
-          <button onclick="createWithBarcode('${code}')" class="flex-1 py-3 rounded-xl brand-grad text-white font-semibold">Create new</button>
-        </div>
-      </div>
-    </div>
-  </div>`;
+      // Smart unknown-barcode handler: link to existing OR create new.
+      // Context is inferred from current scanner context (pos/products) → maps to link-or-create flow.
+      const ctx = (typeof scannerCtx !== 'undefined' && scannerCtx === 'pos') ? 'pos' : 'find';
+      showLinkOrCreateModal(code, ctx);
     }
     function createWithBarcode(code) {
       $('#modal-root').innerHTML = '';
@@ -1217,7 +1244,7 @@
         let list = state.products;
         if (filter === 'low') list = list.filter(p => p.stock <= p.lowStock && p.stock > 0);
         if (filter === 'out') list = list.filter(p => p.stock === 0);
-        if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.barcode.includes(q) || p.brand.toLowerCase().includes(q));
+        if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || getAllBarcodes(p).some(b => b.includes(q)) || (p.brand || '').toLowerCase().includes(q));
         $('#pr-list').innerHTML = list.length === 0
           ? `<div class="text-center py-12 text-stone-500 text-sm">No products found</div>`
           : list.map(p => `
@@ -1225,7 +1252,7 @@
           <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center text-2xl flex-shrink-0">${categoryEmoji(p.category)}</div>
           <div class="flex-1 min-w-0">
             <div class="text-sm font-semibold truncate">${p.name}</div>
-            <div class="text-[11px] text-stone-500 mt-0.5">${p.category} • ${p.barcode}</div>
+            <div class="text-[11px] text-stone-500 mt-0.5">${p.category} • ${getAllBarcodes(p)[0] || '<span class="text-amber-600">no barcode</span>'}</div>
             <div class="flex items-center gap-1.5 mt-1">
               <span class="badge ${p.stock === 0 ? 'bg-red-100 text-red-700' : p.stock <= p.lowStock ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
                 ${p.stock === 0 ? 'Out of stock' : p.stock <= p.lowStock ? p.stock + ' left (low)' : p.stock + ' in stock'}
@@ -1275,8 +1302,18 @@
       <div class="card p-3 text-center"><div class="text-[10px] text-stone-500 uppercase">Value</div><div class="text-sm font-bold mt-1">${fmtNPR(p.cost * p.stock)}</div></div>
     </div>
     <div class="card p-4">
-      <div class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Barcode</div>
-      <div class="font-mono text-base mt-0.5">${p.barcode}</div>
+      <div class="flex items-center justify-between">
+        <div class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Barcodes (${getAllBarcodes(p).length})</div>
+        <button onclick="scanExtraBarcodeForProduct('${p.id}')" class="text-xs font-semibold text-purple-700">+ Scan to add</button>
+      </div>
+      ${getAllBarcodes(p).length === 0
+          ? `<div class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mt-2">No barcode on file. Scanning at checkout will not find this product — add one to enable scanning.</div>`
+          : `<div class="mt-1 space-y-1">${getAllBarcodes(p).map((b, i) => `
+            <div class="flex items-center justify-between font-mono text-sm">
+              <div>${b} ${i === 0 ? '<span class="ml-1 text-[10px] uppercase tracking-wide font-sans font-semibold text-stone-400">primary</span>' : ''}</div>
+              ${i > 0 ? `<button onclick="removeBarcodeFromProduct('${p.id}','${b}')" class="text-xs text-red-500">remove</button>` : ''}
+            </div>`).join('')}</div>`
+        }
     </div>
     <div class="card p-4">
       <div class="text-xs font-semibold text-stone-500 mb-2">RECENT SALES</div>
@@ -1410,10 +1447,18 @@
       };
       if (!data.name) { toast('Name is required', 'error'); return; }
       if (!data.price || !data.cost) { toast('Price and cost are required', 'error'); return; }
-      if (!data.barcode) data.barcode = String(Date.now()).slice(-13);
-      // duplicate barcode check
-      if (state.products.some(p => p.barcode === data.barcode && p.id !== pid)) {
-        toast('Barcode already exists', 'error'); return;
+
+      // Barcode handling: if blank, ask the user to confirm "no barcode" (warns about checkout scanning)
+      if (!data.barcode) {
+        const ok = confirm('No barcode entered.\n\nWithout a real barcode, you will NOT be able to scan this product at checkout — only search by name will work.\n\nContinue without a barcode?');
+        if (!ok) return;
+        data.barcode = ''; // explicit empty (no fake auto-barcode)
+      } else {
+        // duplicate-barcode check across primary + alternates of every other product
+        const conflict = state.products.find(p => p.id !== pid && getAllBarcodes(p).includes(data.barcode));
+        if (conflict) {
+          toast(`Barcode already used by ${conflict.name}`, 'error'); return;
+        }
       }
       if (pid) {
         const p = state.products.find(x => x.id === pid);
@@ -1442,8 +1487,10 @@
           existing.stock += addedQty;
           // Refresh cost only if a new cost was supplied (keeps history of last buy price)
           if (data.cost > 0) existing.cost = data.cost;
-          // Keep the existing barcode if user left it blank/auto; otherwise leave existing barcode untouched
-          // (we don't overwrite barcode on merge to avoid breaking scans on the original entry)
+          // If a barcode was entered for this "new" product and it's not yet linked to the
+          // existing one, auto-link it as an alternate barcode (handy for repackaged batches).
+          let linkedExtra = false;
+          if (data.barcode) linkedExtra = addBarcodeToProduct(existing, data.barcode);
 
           const purchase = {
             id: uid('pu'), supplier, bill,
@@ -1453,14 +1500,15 @@
           };
           state.purchases.push(purchase);
 
-          audit('purchase_create', `Merged stock into existing: ${existing.name} ${existing.unit} (+${addedQty}, supplier: ${supplier})`);
+          audit('purchase_create', `Merged stock into existing: ${existing.name} ${existing.unit} (+${addedQty}, supplier: ${supplier})${linkedExtra ? ` [linked extra barcode ${data.barcode}]` : ''}`);
           Store.save();
-          toast(`Added ${addedQty} to existing ${existing.name} (${existing.unit}). New stock: ${existing.stock}`, 'success');
+          toast(`Added ${addedQty} to existing ${existing.name} (${existing.unit}). New stock: ${existing.stock}${linkedExtra ? ' (barcode linked)' : ''}`, 'success');
           goto('products');
           return;
         }
 
-        const np = { id: uid('p'), ...data };
+        // Brand-new product: ensure barcodes array is initialized (primary as first entry)
+        const np = { id: uid('p'), ...data, barcodes: data.barcode ? [data.barcode] : [] };
         state.products.push(np);
         // Auto-create purchase record for stock received
         if (data.stock > 0) {
@@ -1989,17 +2037,106 @@
     }
 
     /* ====================================================================
-       ADD STOCK (INTERACTIVE)
+       ADD STOCK (INTERACTIVE)  —  two-path entry
+       Path A: Add Existing Product   (scan or search → quantity modal)
+       Path B: Add New Product        (full new-product form)
        ==================================================================== */
     function renderStockAdd() {
-      // Redirect to Products page and open the Add Product sheet
-      goto('products');
-      setTimeout(() => openAddProductSheet(), 150);
+      $('#app').innerHTML = `
+  ${shellHeader('Add Stock', { back: true, sub: 'Restock existing product or add a new one' })}
+  <div class="px-4 -mt-2 space-y-3">
+    <button onclick="goto('stock-existing')" class="card w-full flex items-center gap-4 p-5 text-left active:scale-[.98] transition">
+      <div class="w-12 h-12 rounded-xl brand-grad flex items-center justify-center text-white flex-shrink-0">${ICON.box}</div>
+      <div class="flex-1">
+        <div class="font-bold text-base">Add Existing Product</div>
+        <div class="text-xs text-stone-500 mt-0.5">Restock something you already sell — scan or search</div>
+      </div>
+      <span class="text-stone-300 text-xl">›</span>
+    </button>
+    <button onclick="goto('product-new')" class="card w-full flex items-center gap-4 p-5 text-left active:scale-[.98] transition">
+      <div class="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center text-stone-700 flex-shrink-0">${ICON.plus}</div>
+      <div class="flex-1">
+        <div class="font-bold text-base">Add New Product</div>
+        <div class="text-xs text-stone-500 mt-0.5">First time stocking this product — full details required</div>
+      </div>
+      <span class="text-stone-300 text-xl">›</span>
+    </button>
+
+    <div class="card p-4 mt-2">
+      <div class="text-xs font-semibold text-stone-500 uppercase mb-2">Recently restocked</div>
+      <div id="recent-restock-list" class="space-y-1.5"></div>
+    </div>
+  </div>
+  ${bottomNav()}`;
+
+      // Recently restocked = last 5 unique products from purchase history
+      const recentIds = [];
+      for (let i = state.purchases.length - 1; i >= 0 && recentIds.length < 5; i--) {
+        (state.purchases[i].items || []).forEach(it => {
+          if (it.productId && !recentIds.includes(it.productId)) recentIds.push(it.productId);
+        });
+      }
+      const recent = recentIds.map(id => state.products.find(p => p.id === id)).filter(Boolean);
+      $('#recent-restock-list').innerHTML = recent.length === 0
+        ? `<div class="text-xs text-stone-400 py-2">No recent restocks yet.</div>`
+        : recent.map(p => `
+          <button onclick="openStockQtyModal('${p.id}')" class="w-full flex items-center gap-3 p-2 rounded-lg active:bg-stone-50 text-left">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center text-lg flex-shrink-0">${categoryEmoji(p.category)}</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold truncate">${p.name}</div>
+              <div class="text-[11px] text-stone-500">Stock: ${p.stock}${p.unit ? ' • ' + p.unit : ''}</div>
+            </div>
+            <span class="text-xs font-semibold text-purple-700">+ Add</span>
+          </button>`).join('');
+    }
+
+    /* Path A — picker: scan or search to find an existing product */
+    function renderStockExisting() {
+      $('#app').innerHTML = `
+  ${shellHeader('Add Existing Product', { back: true, sub: 'Find the product to restock' })}
+  <div class="px-4 -mt-2 space-y-3">
+    <button onclick="openStockScanner()" class="card w-full flex items-center gap-4 p-5 text-left active:scale-[.98] transition">
+      <div class="w-12 h-12 rounded-xl brand-grad flex items-center justify-center text-white flex-shrink-0">${ICON.scan}</div>
+      <div class="flex-1">
+        <div class="font-bold text-base">Scan Barcode</div>
+        <div class="text-xs text-stone-500 mt-0.5">Scan one bottle from the new shipment</div>
+      </div>
+      <span class="text-stone-300 text-xl">›</span>
+    </button>
+
+    <div class="card p-3">
+      <div class="flex items-center gap-2 border border-stone-200 rounded-xl px-3 py-2.5 mb-2">
+        <span class="text-stone-400">${ICON.search}</span>
+        <input id="stock-search" placeholder="Search by product name…" class="flex-1 outline-none text-sm" oninput="filterStockSearchList()" />
+      </div>
+      <div id="stock-search-list" class="space-y-1 max-h-[55vh] overflow-y-auto"></div>
+    </div>
+  </div>
+  ${bottomNav()}`;
+      filterStockSearchList();
+      setTimeout(() => { const el = $('#stock-search'); if (el) el.focus(); }, 200);
+    }
+
+    function filterStockSearchList() {
+      const q = ($('#stock-search') || {}).value?.trim().toLowerCase() || '';
+      const list = state.products.filter(p =>
+        !q || p.name.toLowerCase().includes(q) || getAllBarcodes(p).some(b => b.includes(q))
+      ).slice(0, 50);
+      $('#stock-search-list').innerHTML = list.length === 0
+        ? `<div class="text-center text-stone-400 text-sm py-6">No products match. <button onclick="goto('product-new')" class="text-purple-700 font-semibold">Add as new?</button></div>`
+        : list.map(p => `
+          <button onclick="openStockQtyModal('${p.id}')" class="w-full flex items-center gap-3 p-2.5 rounded-lg active:bg-stone-50 text-left">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center text-xl flex-shrink-0">${categoryEmoji(p.category)}</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold truncate">${p.name}</div>
+              <div class="text-[11px] text-stone-500">${p.unit || ''}${p.unit ? ' • ' : ''}Stock: ${p.stock}</div>
+            </div>
+            <span class="text-xs font-semibold text-purple-700">+ Add</span>
+          </button>`).join('');
     }
 
     function openStockScanner() {
-      openScanner('products'); // use generic scanner UI overlay
-      // Temporary override
+      openScanner('products'); // reuse generic scanner overlay
       const orig = window.handleScanned;
       window.handleScanned = (code) => {
         closeScanner();
@@ -2009,28 +2146,49 @@
     }
 
     function processStockScanned(code) {
-      const p = state.products.find(p => p.barcode === code);
+      const p = findProductByBarcode(code);
       if (p) {
-        // Exists: Prompt for adding stock
-        $('#modal-root').innerHTML = `
+        openStockQtyModal(p.id);
+      } else {
+        // Unknown barcode — offer to LINK to an existing product, or create new
+        showLinkOrCreateModal(code, /*context=*/'stock');
+      }
+    }
+
+    /* Quantity modal — captures qty, cost, supplier, bill */
+    function openStockQtyModal(pid) {
+      const p = state.products.find(x => x.id === pid);
+      if (!p) return;
+      $('#modal-root').innerHTML = `
     <div class="modal-bd fixed inset-0 bg-black/60 z-50 flex items-end justify-center">
-      <div class="sheet bg-white w-full max-w-[480px] rounded-t-3xl p-6">
+      <div class="sheet bg-white w-full max-w-[480px] rounded-t-3xl p-6 max-h-[90vh] overflow-y-auto">
         <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-4"></div>
         <div class="flex items-center gap-4 mb-4 pb-4 border-b border-stone-100">
            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center text-3xl flex-shrink-0">${categoryEmoji(p.category)}</div>
-           <div>
-             <div class="font-bold text-lg leading-tight">${p.name}</div>
-             <div class="text-xs text-stone-500 mt-1">Current Stock: <span class="font-bold text-stone-800">${p.stock}</span></div>
+           <div class="flex-1 min-w-0">
+             <div class="font-bold text-lg leading-tight truncate">${p.name}</div>
+             <div class="text-xs text-stone-500 mt-1">Current Stock: <span class="font-bold text-stone-800">${p.stock}</span>${p.unit ? ' • ' + p.unit : ''}</div>
            </div>
         </div>
         <div class="space-y-3 mb-5">
            <div>
-             <label class="block text-xs font-semibold text-stone-600 mb-1">Quantity to Add</label>
-             <input id="sa-qty" type="number" inputmode="numeric" placeholder="e.g. 10" class="w-full border border-stone-200 rounded-xl px-3 py-3 ring-brand text-base font-bold" />
+             <label class="block text-xs font-semibold text-stone-600 mb-1">Quantity to Add *</label>
+             <input id="sa-qty" type="number" inputmode="numeric" placeholder="e.g. 200" class="w-full border border-stone-200 rounded-xl px-3 py-3 ring-brand text-base font-bold" />
+             <div class="text-[11px] text-stone-400 mt-1">Total bottles received (e.g. 20 cartons × 10 = 200)</div>
            </div>
            <div>
-             <label class="block text-xs font-semibold text-stone-600 mb-1">Update Cost / Unit (NPR) - Optional</label>
+             <label class="block text-xs font-semibold text-stone-600 mb-1">Update Cost / Unit (NPR) — optional</label>
              <input id="sa-cost" type="number" inputmode="decimal" value="${p.cost}" class="w-full border border-stone-200 rounded-xl px-3 py-3 ring-brand text-sm" />
+           </div>
+           <div class="grid grid-cols-2 gap-2">
+             <div>
+               <label class="block text-xs font-semibold text-stone-600 mb-1">Supplier *</label>
+               <input id="sa-supplier" placeholder="Supplier name" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand text-sm" />
+             </div>
+             <div>
+               <label class="block text-xs font-semibold text-stone-600 mb-1">Bill #</label>
+               <input id="sa-bill" placeholder="Optional" class="w-full border border-stone-200 rounded-xl px-3 py-2.5 ring-brand text-sm" />
+             </div>
            </div>
         </div>
         <div class="flex gap-2">
@@ -2039,27 +2197,24 @@
         </div>
       </div>
     </div>`;
-        setTimeout(() => { $('#sa-qty').focus(); }, 300);
-      } else {
-        // Doesn't exist
-        showProductNotFound(code);
-      }
+      setTimeout(() => { const el = $('#sa-qty'); if (el) el.focus(); }, 300);
     }
 
     function confirmStockAdd(pid) {
       const qty = Number($('#sa-qty').value) || 0;
       const cost = Number($('#sa-cost').value) || 0;
+      const supplier = ($('#sa-supplier')?.value || '').trim();
+      const bill = ($('#sa-bill')?.value || '').trim() || '-';
       if (qty <= 0) { toast('Enter a valid quantity', 'error'); return; }
+      if (!supplier) { toast('Supplier name is required', 'error'); return; }
       const p = state.products.find(x => x.id === pid);
       if (p) {
         p.stock += qty;
         if (cost > 0) p.cost = cost;
 
-        // Create stock received record (Purchase)
         const purchase = {
           id: uid('pu'),
-          supplier: 'Direct Add',
-          bill: '-',
+          supplier, bill,
           items: [{ productId: p.id, name: p.name, qty, cost: cost || p.cost }],
           total: qty * (cost || p.cost),
           ts: nowISO(),
@@ -2067,11 +2222,117 @@
         };
         state.purchases.push(purchase);
 
-        audit('purchase_create', `Direct Add: ${p.name} (+${qty})`);
+        audit('purchase_create', `${p.name} +${qty} (supplier: ${supplier})`);
         Store.save();
         toast(`Added ${qty} to ${p.name}`, 'success');
       }
       $('#modal-root').innerHTML = '';
+    }
+
+    /* ── Unknown-barcode modal: link to existing product OR create new ──
+       context: 'pos'   → after linking, add product to cart
+                'stock' → after linking, open stock-quantity modal
+                'find'  → after linking, navigate to product detail
+    */
+    function showLinkOrCreateModal(code, context) {
+      $('#modal-root').innerHTML = `
+  <div class="modal-bd fixed inset-0 bg-black/60 z-50 flex items-end justify-center">
+    <div class="sheet bg-white w-full max-w-[480px] rounded-t-3xl p-5 max-h-[90vh] flex flex-col">
+      <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto mb-3"></div>
+      <div class="text-center mb-3">
+        <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">${ICON.alert}</div>
+        <div class="font-bold text-base mt-2">Unknown barcode</div>
+        <div class="text-xs text-stone-500 mt-0.5">Barcode <span class="font-mono">${code}</span> isn't on file yet.</div>
+      </div>
+      <div class="text-xs font-semibold text-stone-500 uppercase mt-2 mb-1">Link to an existing product</div>
+      <div class="flex items-center gap-2 border border-stone-200 rounded-xl px-3 py-2 mb-2">
+        <span class="text-stone-400">${ICON.search}</span>
+        <input id="link-search" placeholder="Search product name…" class="flex-1 outline-none text-sm" oninput="filterLinkSearchList('${code}','${context}')" />
+      </div>
+      <div id="link-search-list" class="space-y-1 overflow-y-auto flex-1 mb-3" style="min-height:120px;max-height:40vh;"></div>
+      <div class="flex gap-2 pt-2 border-t border-stone-100">
+        <button onclick="$('#modal-root').innerHTML=''" class="flex-1 py-3 rounded-xl border border-stone-200 font-semibold text-stone-600">Cancel</button>
+        <button onclick="$('#modal-root').innerHTML='';createWithBarcode('${code}')" class="flex-1 py-3 rounded-xl brand-grad text-white font-semibold">Add as new</button>
+      </div>
+    </div>
+  </div>`;
+      filterLinkSearchList(code, context);
+      setTimeout(() => { const el = $('#link-search'); if (el) el.focus(); }, 200);
+    }
+
+    function filterLinkSearchList(code, context) {
+      const q = ($('#link-search') || {}).value?.trim().toLowerCase() || '';
+      const list = state.products.filter(p =>
+        !q || p.name.toLowerCase().includes(q) || (p.brand || '').toLowerCase().includes(q)
+      ).slice(0, 30);
+      $('#link-search-list').innerHTML = list.length === 0
+        ? `<div class="text-center text-stone-400 text-sm py-4">${q ? 'No matches' : 'Type a product name to search'}</div>`
+        : list.map(p => `
+          <button onclick="linkBarcodeAndContinue('${p.id}','${code}','${context}')" class="w-full flex items-center gap-3 p-2.5 rounded-lg active:bg-stone-50 text-left">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center text-lg flex-shrink-0">${categoryEmoji(p.category)}</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold truncate">${p.name}</div>
+              <div class="text-[11px] text-stone-500">${p.unit || ''}${p.unit ? ' • ' : ''}Stock: ${p.stock}</div>
+            </div>
+            <span class="text-xs font-semibold text-purple-700">Link</span>
+          </button>`).join('');
+    }
+
+    function linkBarcodeAndContinue(pid, code, context) {
+      const p = state.products.find(x => x.id === pid);
+      if (!p) return;
+      const added = addBarcodeToProduct(p, code);
+      if (added) {
+        audit('product_update', `Linked barcode ${code} to ${p.name}`);
+        Store.save();
+        toast(`Barcode linked to ${p.name}`, 'success');
+      }
+      $('#modal-root').innerHTML = '';
+      if (context === 'pos') { addToCart(p.id); if (route !== 'pos') goto('pos'); }
+      else if (context === 'stock') { openStockQtyModal(p.id); }
+      else { goto('product/' + p.id); }
+    }
+
+    /* Add an extra barcode to an existing product (from product detail page) */
+    function scanExtraBarcodeForProduct(pid) {
+      openScanner('products');
+      const orig = window.handleScanned;
+      window.handleScanned = (code) => {
+        closeScanner();
+        window.handleScanned = orig;
+        const p = state.products.find(x => x.id === pid);
+        if (!p) return;
+        const existing = findProductByBarcode(code);
+        if (existing && existing.id !== pid) {
+          toast(`Barcode already used by ${existing.name}`, 'error');
+          return;
+        }
+        const added = addBarcodeToProduct(p, code);
+        if (added) {
+          audit('product_update', `Added barcode ${code} to ${p.name}`);
+          Store.save();
+          toast('Barcode added', 'success');
+          renderProductDetail(pid);
+        } else {
+          toast('Already on file', 'info');
+        }
+      };
+    }
+
+    function removeBarcodeFromProduct(pid, code) {
+      const p = state.products.find(x => x.id === pid);
+      if (!p) return;
+      if (!confirm(`Remove barcode ${code} from ${p.name}?`)) return;
+      p.barcodes = (p.barcodes || []).filter(b => b !== code);
+      // never remove the primary via this action
+      if (p.barcode === code) {
+        // promote next available to primary, or clear
+        p.barcode = (p.barcodes[0] || '');
+      }
+      audit('product_update', `Removed barcode ${code} from ${p.name}`);
+      Store.save();
+      toast('Barcode removed', 'info');
+      renderProductDetail(pid);
     }
 
 
