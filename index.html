@@ -1424,6 +1424,42 @@
         const supplier = $('#pf-supplier') ? $('#pf-supplier').value.trim() : '';
         const bill = $('#pf-bill') ? $('#pf-bill').value.trim() : '';
         if (!supplier) { toast('Supplier name is required', 'error'); return; }
+
+        // ── Smart-merge: if a product with the same NAME + QUANTITY (unit) already
+        // exists, just add the stock to that product instead of creating a duplicate.
+        // Matching is case-insensitive and ignores surrounding whitespace.
+        const norm = (s) => (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
+        const existing = state.products.find(p =>
+          norm(p.name) === norm(data.name) && norm(p.unit) === norm(data.unit)
+        );
+
+        if (existing) {
+          const addedQty = data.stock || 0;
+          if (addedQty <= 0) {
+            toast('Product already exists. Enter a quantity to add stock.', 'error');
+            return;
+          }
+          existing.stock += addedQty;
+          // Refresh cost only if a new cost was supplied (keeps history of last buy price)
+          if (data.cost > 0) existing.cost = data.cost;
+          // Keep the existing barcode if user left it blank/auto; otherwise leave existing barcode untouched
+          // (we don't overwrite barcode on merge to avoid breaking scans on the original entry)
+
+          const purchase = {
+            id: uid('pu'), supplier, bill,
+            items: [{ productId: existing.id, name: existing.name, qty: addedQty, cost: data.cost || existing.cost }],
+            total: (data.cost || existing.cost) * addedQty,
+            ts: nowISO(), user: session.name
+          };
+          state.purchases.push(purchase);
+
+          audit('purchase_create', `Merged stock into existing: ${existing.name} ${existing.unit} (+${addedQty}, supplier: ${supplier})`);
+          Store.save();
+          toast(`Added ${addedQty} to existing ${existing.name} (${existing.unit}). New stock: ${existing.stock}`, 'success');
+          goto('products');
+          return;
+        }
+
         const np = { id: uid('p'), ...data };
         state.products.push(np);
         // Auto-create purchase record for stock received
